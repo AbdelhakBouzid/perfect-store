@@ -239,3 +239,6 @@ app.listen(PORT, () => {
   console.log(`✅ Server: http://localhost:${PORT}`);
   console.log(`✅ Products: http://localhost:${PORT}/api/products`);
 });
+app.get("/", (req, res) => {
+  res.send("Perfect Store API is running");
+});
