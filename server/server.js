@@ -36,8 +36,13 @@ const __dirname = path.dirname(__filename);
 
 const uploadsDir = path.join(__dirname, "uploads");
 // -------- Serve Client --------
-const clientDir = path.join(__dirname, "../client");
+const clientDir = path.join(__dirname, "public");
 app.use(express.static(clientDir));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ✅ serve uploaded images + cache
