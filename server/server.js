@@ -35,6 +35,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const uploadsDir = path.join(__dirname, "uploads");
+// -------- Serve Client --------
+const clientDir = path.join(__dirname, "../client");
+app.use(express.static(clientDir));
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ✅ serve uploaded images + cache
@@ -240,5 +243,8 @@ app.listen(PORT, () => {
   console.log(`✅ Products: http://localhost:${PORT}/api/products`);
 });
 app.get("/", (req, res) => {
-  res.send("Perfect Store API is running");
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
