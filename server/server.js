@@ -238,34 +238,14 @@ app.delete("/api/admin/products/:id", requireAdmin, (req, res) => {
   });
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Server: http://localhost:${PORT}`);
   console.log(`✅ Products: http://localhost:${PORT}/api/products`);
 });
-app.get("/", (req, res) => {
-  res.sendFile(path.join(clientDir, "index.html"));
-});
-import express from "express";
-import path from "path";
 
 
-// ✅ Serve client static files
-const clientPath = path.resolve(process.cwd(), "..", "client");
-app.use(express.static(clientPath));
 
-// ✅ Home page (client)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(clientPath, "index.html"));
-});
-
-// ✅ (اختياري) خليه باش تعرف API خدام
-app.get("/api", (req, res) => {
-  res.send("perfect store API is running");
-});
-
-// ⬇️ خليهوم كيف ما كانو: routes ديال المنتجات…
-// مثال:
-// app.get("/products", ...)
-// app.post("/products", ...)
-
-export default app;
