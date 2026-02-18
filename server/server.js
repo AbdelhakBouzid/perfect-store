@@ -245,6 +245,27 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
   res.sendFile(path.join(clientDir, "index.html"));
 });
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+import express from "express";
+import path from "path";
+
+
+// ✅ Serve client static files
+const clientPath = path.resolve(process.cwd(), "..", "client");
+app.use(express.static(clientPath));
+
+// ✅ Home page (client)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(clientPath, "index.html"));
 });
+
+// ✅ (اختياري) خليه باش تعرف API خدام
+app.get("/api", (req, res) => {
+  res.send("perfect store API is running");
+});
+
+// ⬇️ خليهوم كيف ما كانو: routes ديال المنتجات…
+// مثال:
+// app.get("/products", ...)
+// app.post("/products", ...)
+
+export default app;
