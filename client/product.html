@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>المنتج — Perfect Store</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-row">
+      <div class="brand">
+        <div class="logo">🛍️</div>
+        <div>
+          <div class="brand-name">Perfect Store</div>
+          <div class="brand-sub">صفحة المنتج</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn ghost" href="./index.html">⬅️ رجوع للمتجر</a>
+        <button id="openCart" class="btn primary">السلة <span id="count" class="badge">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding:18px 0 40px;">
+    <section id="pwrap" class="pwrap" hidden>
+      <div class="pimg">
+        <img id="pimg" alt="product" />
+      </div>
+
+      <div class="pinfo">
+        <div class="meta" style="margin-bottom:10px;">
+          <span class="pill" id="pcat"></span>
+          <span class="pill" id="pstock"></span>
+        </div>
+
+        <h1 id="pname" style="margin:0 0 10px; font-size:28px;"></h1>
+        <p id="pdesc" class="desc" style="font-size:14px;"></p>
+
+        <div class="price-row" style="margin-top:14px;">
+          <div class="price" style="font-size:20px;" id="pprice"></div>
+          <button id="addBtn" class="btn primary">أضف للسلة</button>
+        </div>
+
+        <div class="small muted" style="margin-top:10px;">
+          الدفع عند الاستلام • الشحن مجاني ابتداءً من 600 MAD
+        </div>
+
+        <div style="margin-top:18px;">
+          <h3 style="margin:0 0 10px;">منتجات مشابهة</h3>
+          <div id="related" class="grid" style="grid-template-columns:repeat(3,1fr); padding:0;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="loading" class="card" style="padding:18px;">
+      <b>Loading...</b>
+      <div class="muted small" style="margin-top:6px;">كنحمّلو بيانات المنتج</div>
+    </section>
+  </main>
+
+  <!-- Cart drawer (نفس ديال المتجر) -->
+  <aside id="cart" class="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-title">سلة المشتريات</div>
+        <div class="small muted" id="cartHint">—</div>
+      </div>
+      <button id="closeCart" class="btn ghost">✕</button>
+    </div>
+
+    <div id="items" class="drawer-body"></div>
+
+    <div class="drawer-foot">
+      <div class="totals">
+        <div class="row"><span>المجموع</span><b id="subtotal">0</b> <span class="muted">MAD</span></div>
+        <div class="row"><span>الشحن</span><b id="shipping">0</b> <span class="muted">MAD</span></div>
+        <div class="row total"><span>الإجمالي</span><b id="total">0</b> <span class="muted">MAD</span></div>
+      </div>
+      <a class="btn primary" href="./index.html">إتمام الطلب (من المتجر)</a>
+      <button id="clear" class="btn ghost">تفريغ السلة</button>
+      <div class="small muted">الدفع عند الاستلام.</div>
+    </div>
+  </aside>
+
+  <div id="backdrop" class="backdrop" hidden></div>
+  <div id="toast" class="toast" hidden></div>
+  <script src="config.js"></script>
+  <script src="product.js"></script>
+</body>
+</html>
