@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Perfect Store</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <main class="auth-card">
+    <h1 data-i18n="login">Login</h1>
+    <select id="lang"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="submitBtn" data-mode="login" data-i18n="login">Login</button>
+    <p><a href="./register.html" data-i18n="noAccount">Create account</a></p>
+    <p><a href="./index.html">Back to store</a></p>
+  </main>
+  <div id="toast" hidden></div>
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -18,10 +18,9 @@ export function initDb() {
       )
     `);
 
-    // Migration: add image_url if missing
     db.all(`PRAGMA table_info(products)`, (err, cols) => {
       if (err) return;
-      const hasImage = cols.some(c => c.name === "image_url");
+      const hasImage = cols.some((c) => c.name === "image_url");
       if (!hasImage) db.run(`ALTER TABLE products ADD COLUMN image_url TEXT DEFAULT ''`);
     });
 
@@ -41,7 +40,16 @@ export function initDb() {
       )
     `);
 
-    // Seed products if empty
+    db.run(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `);
+
     db.get("SELECT COUNT(*) as c FROM products", (err, row) => {
       if (err) return;
       if (row.c === 0) {
@@ -52,11 +60,11 @@ export function initDb() {
         `);
 
         const seed = [
-          ["سماعات بلوتوث", 199, "إلكترونيات", "🎧", "صوت واضح وبطارية مزيانة.", 25, "", now],
-          ["ساعة ذكية", 349, "إلكترونيات", "⌚", "قياس خطوات وإشعارات.", 12, "", now],
-          ["هودي", 159, "ملابس", "🧥", "مريح ودافئ.", 30, "", now],
-          ["حذاء رياضي", 299, "ملابس", "👟", "راحة وثبات.", 18, "", now],
-          ["مطحنة قهوة", 149, "المنزل", "☕", "طحن سريع وتنظيف سهل.", 10, "", now]
+          ["Wireless Headphones", 199, "Electronics", "🎧", "Deep bass and long battery life.", 25, "", now],
+          ["Smart Watch", 349, "Electronics", "⌚", "Fitness tracking and notifications.", 12, "", now],
+          ["Premium Hoodie", 159, "Fashion", "🧥", "Soft, warm and comfortable.", 30, "", now],
+          ["Running Shoes", 299, "Fashion", "👟", "Lightweight support for daily runs.", 18, "", now],
+          ["Coffee Grinder", 149, "Home", "☕", "Fast grinding with easy cleanup.", 10, "", now]
         ];
 
         for (const p of seed) stmt.run(p);
@@ -65,4 +73,3 @@ export function initDb() {
     });
   });
 }
-
