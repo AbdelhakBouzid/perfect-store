@@ -53,7 +53,7 @@ async function init() {
   await loadCategories();
   await loadProducts();
   renderAll();
-  toast("مرحبا 👋");
+  toast("Welcome 👋");
 }
 
 function bindUI() {
@@ -79,11 +79,11 @@ function bindUI() {
     saveCart();
     renderCartBadge();
     renderCart();
-    toast("تم تفريغ السلة ✅");
+    toast("Cart cleared ✅");
   });
 
   on(openCheckoutBtn, "click", () => {
-    if (getCartCount() === 0) return toast("السلة فارغة 🛒");
+    if (getCartCount() === 0) return toast("Cart is empty 🛒");
     openCheckout();
   });
 
@@ -129,7 +129,7 @@ function bindUI() {
     await loadCategories();
     await loadProducts();
     renderAll();
-    toast("تحديث ✅");
+    toast("Refreshed ✅");
   });
 }
 
@@ -140,12 +140,12 @@ async function loadCategories() {
     const cats = await res.json();
     if (cat) {
       cat.innerHTML =
-        `<option value="all">كل الأصناف</option>` +
+        `<option value="all">All Categories</option>` +
         (cats || []).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
     }
     if (modeInfo) modeInfo.textContent = "Mode: API (server)";
   } catch {
-    if (cat) cat.innerHTML = `<option value="all">كل الأصناف</option>`;
+    if (cat) cat.innerHTML = `<option value="all">All Categories</option>`;
     if (modeInfo) modeInfo.textContent = "Mode: API (server) (categories failed)";
   }
 }
@@ -177,7 +177,7 @@ function renderProducts() {
   if (s === "priceDesc") list.sort((a, b) => b.price - a.price);
   if (s === "nameAsc") list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
-  if (resultInfo) resultInfo.textContent = `عدد النتائج: ${list.length}`;
+  if (resultInfo) resultInfo.textContent = `Results: ${list.length}`;
 
   if (list.length === 0) {
     grid.innerHTML = "";
@@ -201,13 +201,13 @@ function renderProducts() {
         <div class="card-body">
           <div class="meta">
             <span class="pill">${escapeHtml(p.category || "")}</span>
-            <span class="pill ${out ? "out" : ""}">${out ? "نفذ المخزون" : "متوفر: " + Number(p.stock)}</span>
+            <span class="pill ${out ? "out" : ""}">${out ? "Out of stock" : "In stock: " + Number(p.stock)}</span>
           </div>
           <h3><a class="plink" href="./product.html?id=${Number(p.id)}">${escapeHtml(p.name)}</a></h3>
           <p class="desc">${escapeHtml(p.description || "")}</p>
           <div class="price-row">
             <div class="price">${money(Number(p.price))} MAD</div>
-            <button class="btn primary" data-add="${Number(p.id)}" ${out ? "disabled" : ""}>أضف للسلة</button>
+            <button class="btn primary" data-add="${Number(p.id)}" ${out ? "disabled" : ""}>Shop Now</button>
           </div>
         </div>
       </article>
@@ -222,7 +222,7 @@ function renderProducts() {
       renderCartBadge();
       renderCart();
       openCart();
-      toast("تمت الإضافة للسلة ✅");
+      toast("Added to cart ✅");
     });
   });
 }
@@ -266,17 +266,17 @@ function renderCart() {
   if (!itemsEl) return;
 
   const lines = getCartLines();
-  if (cartHint) cartHint.textContent = lines.length ? `عدد العناصر: ${getCartCount()}` : "السلة فارغة";
+  if (cartHint) cartHint.textContent = lines.length ? `Items: ${getCartCount()}` : "Cart is empty";
 
   if (!lines.length) {
-    itemsEl.innerHTML = `<div class="muted">السلة فارغة… زيد شي منتوج 😊</div>`;
+    itemsEl.innerHTML = `<div class="muted">Your cart is empty… add products 😊</div>`;
   } else {
     itemsEl.innerHTML = lines.map(x => `
       <div class="item">
         <div class="item-top">
           <div>
             <div class="item-name">${escapeHtml(x.p.emoji || "📦")} ${escapeHtml(x.p.name)}</div>
-            <div class="small muted item-sub">سعر الوحدة: ${money(Number(x.p.price))} MAD</div>
+            <div class="small muted item-sub">Unit price: ${money(Number(x.p.price))} MAD</div>
           </div>
           <div><b>${money(Number(x.p.price) * x.qty)} MAD</b></div>
         </div>
@@ -284,7 +284,7 @@ function renderCart() {
           <button data-dec="${x.id}">−</button>
           <b>${x.qty}</b>
           <button data-inc="${x.id}">+</button>
-          <button class="btn ghost remove" data-rem="${x.id}">حذف</button>
+          <button class="btn ghost remove" data-rem="${x.id}">Remove</button>
         </div>
       </div>
     `).join("");
@@ -315,7 +315,7 @@ function removeItem(id) {
   saveCart();
   renderCartBadge();
   renderCart();
-  toast("تم حذف العنصر ✅");
+  toast("Item removed ✅");
 }
 
 // ---------- Drawer / Modal ----------
@@ -371,7 +371,7 @@ function isCheckoutOpen() {
 // ---------- Place order ----------
 async function placeOrder() {
   const lines = getCartLines();
-  if (!lines.length) return toast("السلة فارغة 🛒");
+  if (!lines.length) return toast("Cart is empty 🛒");
 
   const payload = {
     name: nameEl ? nameEl.value.trim() : "",

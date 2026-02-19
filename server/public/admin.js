@@ -39,7 +39,7 @@ tokenEl.value = localStorage.getItem(TOKEN_KEY) || "";
 
 saveTokenBtn.addEventListener("click", () => {
   localStorage.setItem(TOKEN_KEY, tokenEl.value.trim() || "");
-  toast("تم حفظ التوكن ✅");
+  toast("Token saved ✅");
 });
 
 imageFileEl.addEventListener("change", async () => {
@@ -47,7 +47,7 @@ imageFileEl.addEventListener("change", async () => {
   if (!file) return;
 
   if (file.size > 2 * 1024 * 1024) {
-    toast("الصورة كبيرة بزاف (أقصى 2MB) ⚠️");
+    toast("Image is too large (max 2MB) ⚠️");
     imageFileEl.value = "";
     return;
   }
@@ -58,12 +58,12 @@ imageFileEl.addEventListener("change", async () => {
 
 cancelEditBtn.addEventListener("click", () => {
   clearForm();
-  toast("تم إلغاء التعديل");
+  toast("Edit canceled");
 });
 
 refreshListBtn.addEventListener("click", async () => {
   await loadAndRenderProducts();
-  toast("تم تحديث المنتجات ✅");
+  toast("Products refreshed ✅");
 });
 
 searchEl.addEventListener("input", () => renderProducts(window.__productsCache || []));
@@ -74,7 +74,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const token = getToken();
-  if (!token) return toast("دخل Admin Token أولاً ⚠️");
+  if (!token) return toast("Enter admin token first ⚠️");
 
   // upload image if selected
   let image_url = imageUrlEl.value || "";
@@ -84,7 +84,7 @@ form.addEventListener("submit", async (e) => {
     try {
       image_url = await uploadImage(file, token);
     } catch {
-      return toast("فشل رفع الصورة ❌");
+      return toast("Upload failed ❌");
     }
   }
 
@@ -99,19 +99,19 @@ form.addEventListener("submit", async (e) => {
   };
 
   if (!payload.name || !payload.category || !payload.description || isNaN(payload.price) || isNaN(payload.stock)) {
-    return toast("عافاك عمّر البيانات مزيان ⚠️");
+    return toast("Please complete required fields ⚠️");
   }
 
   try {
     if (idEl.value) {
       await apiUpdateProduct(Number(idEl.value), payload, token);
-      toast("تم تحديث المنتج ✅");
+      toast("Product updated ✅");
     } else {
       await apiCreateProduct(payload, token);
-      toast("تم إضافة المنتج ✅");
+      toast("Product added ✅");
     }
   } catch {
-    return toast("خطأ فالحفظ ❌ (راجع التوكن/السيرفر)");
+    return toast("Save failed ❌ (check token/server)");
   }
 
   clearForm();
@@ -144,29 +144,25 @@ function renderProducts(list) {
 
   listEl.innerHTML = filtered.map(p => {
     const img = p.image_url ? `${SERVER}${p.image_url}` : "";
+    const inStock = Number(p.stock) > 0;
     return `
-      <div class="item">
-        <div class="itemTop">
-          <div>
-            <div class="itemName">${escapeHtml(p.name)} <span class="pill">${escapeHtml(p.category)}</span></div>
-            <div class="itemMeta">
-              <span class="pill">الثمن: ${Number(p.price)} MAD</span>
-              <span class="pill">المخزون: ${Number(p.stock)}</span>
-              <span class="pill">#${Number(p.id)}</span>
-            </div>
-          </div>
+      <div class="row-item">
+        <div>
+          ${img
+            ? `<img class="p-thumb" src="${img}" alt="${escapeHtml(p.name)}" />`
+            : `<div class="p-thumb" style="display:grid;place-items:center;font-size:32px;">${escapeHtml(p.emoji || "📦")}</div>`}
         </div>
-
-        ${img ? `<div style="margin-top:10px; border:1px solid #23283a; border-radius:14px; overflow:hidden;">
-                  <img src="${img}" style="width:100%; height:140px; object-fit:cover; display:block;" />
-                </div>` : ""}
-
-        <div class="itemMeta" style="margin-top:8px;">${escapeHtml(p.description)}</div>
-
+        <div>
+          <div class="itemName">${escapeHtml(p.name)}</div>
+          <div class="itemMeta">${escapeHtml(p.description || "No description")}</div>
+          <div class="itemMeta">${escapeHtml(p.category)} • #${Number(p.id)}</div>
+        </div>
+        <div><strong>$${Number(p.price).toFixed(2)}</strong></div>
+        <div>${Number(p.stock)}</div>
+        <div><span class="pill ${inStock ? "ok" : "bad"}">${inStock ? "Active" : "Out"}</span></div>
         <div class="itemActions">
-          <button class="btn primary" data-edit="${Number(p.id)}">تعديل</button>
-          <button class="btn ghost" data-del="${Number(p.id)}">حذف</button>
-          <a class="btn ghost" href="./product.html?id=${Number(p.id)}" target="_blank">فتح صفحة المنتج</a>
+          <button class="btn primary" data-edit="${Number(p.id)}">Edit</button>
+          <button class="btn ghost" data-del="${Number(p.id)}">Delete</button>
         </div>
       </div>
     `;
@@ -183,14 +179,14 @@ function renderProducts(list) {
   listEl.querySelectorAll("[data-del]").forEach(b => {
     b.addEventListener("click", async () => {
       const token = getToken();
-      if (!token) return toast("دخل Admin Token ⚠️");
+      if (!token) return toast("Enter admin token ⚠️");
       const id = Number(b.dataset.del);
       try {
         await apiDeleteProduct(id, token);
-        toast("تم حذف المنتج ✅");
+        toast("Product deleted ✅");
         await loadAndRenderProducts();
       } catch {
-        toast("فشل الحذف ❌");
+        toast("Delete failed ❌");
       }
     });
   });
@@ -210,7 +206,7 @@ function startEdit(p) {
   else clearPreview();
 
   imageFileEl.value = "";
-  toast("كتعدل دابا ✍️");
+  toast("Editing product ✍️");
 }
 
 function clearForm() {
@@ -276,12 +272,12 @@ async function apiDeleteProduct(id, token) {
 /* -------- Orders dashboard -------- */
 async function loadOrders() {
   const token = getToken();
-  if (!token) return toast("دخل Admin Token ⚠️");
+  if (!token) return toast("Enter admin token ⚠️");
 
   try {
     const res = await fetch(`${API}/admin/orders`, { headers: { "x-admin-token": token } });
     const data = await res.json();
-    if (!res.ok) return toast("فشل تحميل الطلبات ❌");
+    if (!res.ok) return toast("Failed loading orders ❌");
 
     ordersEl.innerHTML = (data || []).map(o => {
       const phone = String(o.phone || "").replace(/\s+/g, "");
@@ -318,17 +314,17 @@ async function loadOrders() {
         const st = String(btn.dataset.st);
         try {
           await updateOrderStatus(oid, st, token);
-          toast(`تم تحديث الطلب #${oid} ✅`);
+          toast(`Order #${oid} updated ✅`);
           await loadOrders();
         } catch {
-          toast("فشل تحديث الحالة ❌");
+          toast("Failed updating status ❌");
         }
       });
     });
 
-    toast("تم تحميل الطلبات ✅");
+    toast("Orders loaded ✅");
   } catch {
-    toast("خطأ فالاتصال بالسيرفر ❌");
+    toast("Server connection error ❌");
   }
 }
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,75 +9,38 @@
 <body>
   <header class="topbar">
     <div class="container topbar-row">
-      <div class="brand">
-        <div class="logo">🛍️</div>
-        <div>
-          <div class="brand-name">Perfect Store</div>
-          <div class="brand-sub" id="modeInfo">Mode: —</div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <a class="btn ghost" href="./admin.html">🛠️ Admin</a>
-        <button id="openCart" class="btn primary">
-          السلة <span id="count" class="badge">0</span>
-        </button>
-      </div>
+      <div class="mode-pill">🌙 Dark Mode</div>
+      <nav class="nav-links">
+        <a href="#">Language ▾</a>
+        <a href="./login.html">Sign In</a>
+        <a href="./register.html">Register</a>
+      </nav>
     </div>
   </header>
 
   <section class="hero">
-    <div class="container hero-grid">
-      <div>
-        <h1>متجر احترافي + صور حقيقية</h1>
-        <p>بحث، فلترة، ترتيب، سلة، إتمام الطلب، وصور كتطلع من السيرفر.</p>
-        <div class="hero-badges">
-          <span class="chip">✅ UI/UX</span>
-          <span class="chip">🖼️ Upload صور</span>
-          <span class="chip">🧾 Orders</span>
-        </div>
-      </div>
-
-      <div class="hero-card">
-        <div class="kpis">
-          <div class="kpi">
-            <div class="kpi-num" id="kpiProducts">—</div>
-            <div class="kpi-lbl">عدد المنتجات</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-num">MAD</div>
-            <div class="kpi-lbl">العملة</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-num">24/7</div>
-            <div class="kpi-lbl">طلبات</div>
-          </div>
-        </div>
-        <div class="hero-card-body">
-          <div class="tip-title">نصيحة</div>
-          <div class="tip-text">زيد منتوجات وصور من Admin Panel وغادي يبانوا هنا.</div>
-        </div>
+    <div class="container hero-content">
+      <h1>Latest <span>Tech &amp; Gadgets</span></h1>
+      <p>Find the Best Deals on Electronics</p>
+      <div class="hero-meta">
+        <span id="modeInfo">Mode: API</span>
+        <span>Products: <b id="kpiProducts">—</b></span>
       </div>
     </div>
   </section>
 
   <section class="container toolbar">
-    <div class="toolbar-row">
-      <div class="search">
-        <input id="q" placeholder="ابحث عن منتج..." />
-        <span class="search-icon">⌕</span>
-      </div>
-
-      <select id="cat" class="select"></select>
-
+    <div class="tabs-row">
+      <select id="cat" class="tab-select"></select>
+      <input id="q" placeholder="Search products..." />
       <select id="sort" class="select">
-        <option value="featured">ترتيب: مقترح</option>
-        <option value="priceAsc">السعر: من الأقل للأعلى</option>
-        <option value="priceDesc">السعر: من الأعلى للأقل</option>
-        <option value="nameAsc">الاسم: A → Z</option>
+        <option value="featured">Featured</option>
+        <option value="priceAsc">Price: Low to High</option>
+        <option value="priceDesc">Price: High to Low</option>
+        <option value="nameAsc">Name: A → Z</option>
       </select>
-
-      <button id="refresh" class="btn ghost">تحديث</button>
+      <button id="refresh" class="btn ghost">Refresh</button>
+      <button id="openCart" class="btn primary">Cart <span id="count" class="badge">0</span></button>
     </div>
     <div class="small muted" id="resultInfo">—</div>
   </section>
@@ -86,16 +49,15 @@
     <section id="grid" class="grid"></section>
     <div id="emptyState" class="empty" hidden>
       <div class="empty-emoji">😕</div>
-      <div class="empty-title">ما لقيّناش نتائج</div>
-      <div class="empty-sub">بدّل البحث أو الصنف.</div>
+      <div class="empty-title">No products found</div>
+      <div class="empty-sub">Change category or search query.</div>
     </div>
   </main>
 
-  <!-- Cart drawer -->
   <aside id="cart" class="drawer" aria-hidden="true">
     <div class="drawer-head">
       <div>
-        <div class="drawer-title">سلة المشتريات</div>
+        <div class="drawer-title">Shopping Cart</div>
         <div class="small muted" id="cartHint">—</div>
       </div>
       <button id="closeCart" class="btn ghost">✕</button>
@@ -105,52 +67,50 @@
 
     <div class="drawer-foot">
       <div class="totals">
-        <div class="row"><span>المجموع</span><b id="subtotal">0</b> <span class="muted">MAD</span></div>
-        <div class="row"><span>الشحن</span><b id="shipping">0</b> <span class="muted">MAD</span></div>
-        <div class="row total"><span>الإجمالي</span><b id="total">0</b> <span class="muted">MAD</span></div>
+        <div class="row"><span>Subtotal</span><b id="subtotal">0</b> <span class="muted">MAD</span></div>
+        <div class="row"><span>Shipping</span><b id="shipping">0</b> <span class="muted">MAD</span></div>
+        <div class="row total"><span>Total</span><b id="total">0</b> <span class="muted">MAD</span></div>
       </div>
 
-      <button id="openCheckout" class="btn primary">إتمام الطلب</button>
-      <button id="clear" class="btn ghost">تفريغ السلة</button>
-
-      <div class="small muted">الدفع عند الاستلام.</div>
+      <button id="openCheckout" class="btn primary">Checkout</button>
+      <button id="clear" class="btn ghost">Clear Cart</button>
+      <div class="small muted">Cash on delivery.</div>
     </div>
   </aside>
 
   <div id="backdrop" class="backdrop" hidden></div>
 
-  <!-- Checkout Modal -->
   <section id="checkout" class="modal" hidden>
     <div class="modal-card">
       <div class="modal-head">
         <div>
-          <div class="modal-title">إتمام الطلب</div>
-          <div class="small muted">عمر المعلومات ثم أكد.</div>
+          <div class="modal-title">Checkout</div>
+          <div class="small muted">Fill the form and confirm your order.</div>
         </div>
         <button id="closeCheckout" class="btn ghost">✕</button>
       </div>
 
       <div class="modal-body">
         <div class="form-row">
-          <label>الاسم الكامل
-            <input id="name" placeholder="الاسم..." />
+          <label>Full Name
+            <input id="name" placeholder="John Doe" />
           </label>
-          <label>رقم الهاتف
+          <label>Phone
             <input id="phone" placeholder="+212..." />
           </label>
         </div>
 
-        <label>العنوان
-          <input id="address" placeholder="المدينة / الحي..." />
+        <label>Address
+          <input id="address" placeholder="City / Street..." />
         </label>
 
-        <label>ملاحظات (اختياري)
-          <textarea id="notes" placeholder="لون/مقاس/وقت..."></textarea>
+        <label>Notes (optional)
+          <textarea id="notes" placeholder="Color / size / time..."></textarea>
         </label>
 
         <div class="modal-foot">
-          <button id="checkoutBtn" class="btn primary">تأكيد الطلب</button>
-          <button id="cancelCheckout" class="btn ghost">إلغاء</button>
+          <button id="checkoutBtn" class="btn primary">Confirm Order</button>
+          <button id="cancelCheckout" class="btn ghost">Cancel</button>
         </div>
       </div>
     </div>
