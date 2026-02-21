@@ -1,22 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Toast from "../components/Toast";
+import Footer from "../components/layout/Footer";
+import GlassCard from "../components/layout/GlassCard";
+import LayoutShell from "../components/layout/LayoutShell";
+import TopBar from "../components/layout/TopBar";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import useToast from "../hooks/useToast";
-import { api, requestJson } from "../lib/api";
-import { API_URL, toAbsoluteUploadUrl } from "../lib/config";
-import { money } from "../lib/format";
+import { requestJson } from "../lib/api";
+import { API_URL } from "../lib/config";
+import { formatPrice } from "../lib/format";
+import { fetchProducts, resolveProductImage } from "../lib/productsApi";
 import { ADMIN_TOKEN_STORAGE_KEY } from "../lib/storage";
-import "../styles/admin.css";
 
 const INITIAL_FORM = {
   id: "",
   name: "",
   price: "",
   category: "",
-  emoji: "",
   stock: "",
-  description: "",
-  image_url: ""
+  emoji: "???",
+  image_url: "",
+  description: ""
 };
 
 function readInitialToken() {
@@ -24,118 +30,97 @@ function readInitialToken() {
   return window.localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "";
 }
 
+async function adminRequest(path, token, options = {}) {
+  return requestJson(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      "x-admin-token": token
+    }
+  });
+}
+
 export default function AdminPage() {
+  const { t, i18n } = useTranslation();
   const [token, setToken] = useState(readInitialToken);
   const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [source, setSource] = useState("api");
   const [form, setForm] = useState(INITIAL_FORM);
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [fileInputKey, setFileInputKey] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [toastMessage, showToast] = useToast();
 
   useEffect(() => {
-    document.documentElement.lang = "en";
-    document.documentElement.dir = "ltr";
-    document.title = "Admin - Perfect Store";
-  }, []);
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
+    document.title = t("meta.admin");
+  }, [t, i18n.language]);
 
   async function loadProducts() {
-    try {
-      const response = await api("/products");
-      setProducts(Array.isArray(response) ? response : []);
-    } catch (error) {
-      showToast(error.message || "Failed to load products");
-    }
+    setLoading(true);
+    const result = await fetchProducts();
+    setProducts(result.products);
+    setSource(result.source);
+    setLoading(false);
   }
+
+  useEffect(() => {
+    loadProducts().catch(() => showToast(t("admin.loadFailed")));
+  }, []);
+
+  const links = [
+    { to: "/products", label: t("nav.products") },
+    { to: "/login", label: t("nav.login") },
+    { to: "/register", label: t("nav.register") },
+    { to: "/admin", label: t("nav.admin") }
+  ];
+
+  const filteredProducts = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return products;
+    return products.filter((item) => {
+      const text = `${item.name} ${item.category} ${item.description}`.toLowerCase();
+      return text.includes(normalizedQuery);
+    });
+  }, [products, query]);
 
   function saveToken() {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token.trim());
     }
-    showToast("Token saved");
+    showToast(t("admin.tokenSaved"));
   }
 
   function setField(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm((current) => ({ ...current, [field]: value }));
   }
 
   function resetForm() {
     setForm(INITIAL_FORM);
-    setImageFile(null);
-    setImagePreview("");
-    setFileInputKey((prev) => prev + 1);
   }
 
-  async function adminRequest(path, currentToken, options = {}) {
-    return requestJson(`${API_URL}${path}`, {
-      ...options,
-      headers: {
-        ...(options.headers || {}),
-        "x-admin-token": currentToken
-      }
+  function startEdit(product) {
+    setForm({
+      id: String(product.id),
+      name: product.name || "",
+      price: String(product.price || ""),
+      category: product.category || "",
+      stock: String(product.stock || ""),
+      emoji: product.emoji || "???",
+      image_url: product.image_url || "",
+      description: product.description || ""
     });
   }
 
-  async function uploadImage(file, currentToken) {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const response = await adminRequest("/admin/upload", currentToken, {
-      method: "POST",
-      body: formData
-    });
-    return response.imageUrl;
-  }
-
-  function onFileChange(event) {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      showToast("Image is too large (max 2MB)");
-      setFileInputKey((prev) => prev + 1);
-      return;
-    }
-
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = () => setImagePreview(String(reader.result || ""));
-    reader.readAsDataURL(file);
-  }
-
-  async function onSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-
-    const cleanToken = token.trim();
-    if (!cleanToken) {
-      showToast("Enter admin token first");
-      return;
-    }
-
-    let imageUrl = form.image_url || "";
-    if (imageFile) {
-      try {
-        imageUrl = await uploadImage(imageFile, cleanToken);
-      } catch (error) {
-        showToast(error.message || "Upload failed");
-        return;
-      }
-    }
 
     const payload = {
       name: form.name.trim(),
       price: Number(form.price),
       category: form.category.trim(),
-      emoji: form.emoji.trim() || "Item",
-      description: form.description.trim(),
       stock: Number(form.stock),
-      image_url: imageUrl
+      emoji: form.emoji.trim() || "???",
+      image_url: form.image_url.trim(),
+      description: form.description.trim()
     };
 
     if (
@@ -145,388 +130,254 @@ export default function AdminPage() {
       Number.isNaN(payload.price) ||
       Number.isNaN(payload.stock)
     ) {
-      showToast("Please complete required fields");
+      showToast(t("auth.missingFields"));
       return;
     }
 
-    try {
-      if (form.id) {
-        await adminRequest(`/admin/products/${Number(form.id)}`, cleanToken, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        showToast("Product updated");
-      } else {
-        await adminRequest("/admin/products", cleanToken, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        showToast("Product added");
+    const canCallApi = source === "api" && token.trim();
+    const isEditing = Boolean(form.id);
+
+    if (canCallApi) {
+      try {
+        if (isEditing) {
+          await adminRequest(`/admin/products/${Number(form.id)}`, token.trim(), {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          await adminRequest("/admin/products", token.trim(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+        showToast(t("admin.savedApi"));
+        resetForm();
+        await loadProducts();
+        return;
+      } catch (error) {
+        showToast(error.message || t("admin.loadFailed"));
       }
-      resetForm();
-      await loadProducts();
-    } catch (error) {
-      showToast(error.message || "Save failed");
     }
-  }
 
-  function startEdit(product) {
-    setForm({
-      id: String(product.id),
-      name: product.name || "",
-      price: String(product.price || ""),
-      category: product.category || "",
-      emoji: product.emoji || "",
-      stock: String(product.stock || 0),
-      description: product.description || "",
-      image_url: product.image_url || ""
+    if (source === "api" && !token.trim()) {
+      showToast(t("admin.tokenRequired"));
+    }
+
+    setProducts((current) => {
+      if (isEditing) {
+        return current.map((item) => (Number(item.id) === Number(form.id) ? { ...item, ...payload } : item));
+      }
+
+      const nextId = current.length ? Math.max(...current.map((item) => Number(item.id))) + 1 : 1;
+      return [{ id: nextId, created_at: new Date().toISOString(), ...payload }, ...current];
     });
-    setImageFile(null);
-    setImagePreview(product.image_url ? toAbsoluteUploadUrl(product.image_url) : "");
-    setFileInputKey((prev) => prev + 1);
-    showToast("Editing product");
+    resetForm();
+    showToast(t("admin.savedLocal"));
   }
 
-  async function deleteProduct(productId) {
-    const cleanToken = token.trim();
-    if (!cleanToken) {
-      showToast("Enter admin token first");
-      return;
+  async function handleDelete(productId) {
+    const canCallApi = source === "api" && token.trim();
+    if (canCallApi) {
+      try {
+        await adminRequest(`/admin/products/${Number(productId)}`, token.trim(), { method: "DELETE" });
+        showToast(t("admin.deletedApi"));
+        await loadProducts();
+        return;
+      } catch (error) {
+        showToast(error.message || t("admin.loadFailed"));
+      }
     }
 
-    try {
-      await adminRequest(`/admin/products/${Number(productId)}`, cleanToken, {
-        method: "DELETE"
-      });
-      showToast("Product deleted");
-      await loadProducts();
-    } catch (error) {
-      showToast(error.message || "Delete failed");
-    }
+    setProducts((current) => current.filter((item) => Number(item.id) !== Number(productId)));
+    showToast(t("admin.deletedLocal"));
   }
-
-  async function loadOrders() {
-    const cleanToken = token.trim();
-    if (!cleanToken) {
-      showToast("Enter admin token first");
-      return;
-    }
-
-    try {
-      const response = await adminRequest("/admin/orders", cleanToken);
-      setOrders(Array.isArray(response) ? response : []);
-      showToast("Orders loaded");
-    } catch (error) {
-      showToast(error.message || "Failed to load orders");
-    }
-  }
-
-  async function updateOrderStatus(orderId, status) {
-    const cleanToken = token.trim();
-    if (!cleanToken) {
-      showToast("Enter admin token first");
-      return;
-    }
-
-    try {
-      await adminRequest(`/admin/orders/${Number(orderId)}/status`, cleanToken, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status })
-      });
-      showToast(`Order #${orderId} updated`);
-      await loadOrders();
-    } catch (error) {
-      showToast(error.message || "Failed updating order");
-    }
-  }
-
-  const filteredProducts = useMemo(() => {
-    const normalizedQuery = search.trim().toLowerCase();
-    if (!normalizedQuery) return products;
-    return products.filter((product) => {
-      const text = `${product.name || ""} ${product.category || ""} ${product.description || ""}`.toLowerCase();
-      return text.includes(normalizedQuery);
-    });
-  }, [products, search]);
 
   return (
-    <>
-      <div className="dashboard-layout">
-        <aside className="sidebar">
-          <div className="mode-pill">Admin</div>
-          <nav>
-            <a href="#" onClick={(event) => event.preventDefault()}>
-              Dashboard
-            </a>
-            <a className="active" href="#" onClick={(event) => event.preventDefault()}>
-              Products
-            </a>
-            <a href="#" onClick={(event) => event.preventDefault()}>
-              Orders
-            </a>
-            <a href="#" onClick={(event) => event.preventDefault()}>
-              Customers
-            </a>
-            <a href="#" onClick={(event) => event.preventDefault()}>
-              Statistics
-            </a>
-            <a href="#" onClick={(event) => event.preventDefault()}>
-              Settings
-            </a>
-          </nav>
-          <div className="side-footer">Actions</div>
-        </aside>
+    <LayoutShell>
+      <GlassCard className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
+        <TopBar buyNowTo="/products" cartCount={products.length} links={links} />
 
-        <main className="main-panel">
-          <header className="topbar">
-            <div className="top-links">
-              <a href="#" onClick={(event) => event.preventDefault()}>
-                Language
-              </a>
-              <a href="#" onClick={(event) => event.preventDefault()}>
-                Customer Messages
-              </a>
-              <Link to="/">Open Store</Link>
+        <section className="glass-card space-y-4 p-4 sm:p-5">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-extrabold text-white">{t("admin.title")}</h1>
+            <p className="text-sm text-white/75">{t("admin.subtitle")}</p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <Input
+              label={t("admin.tokenLabel")}
+              onChange={(event) => setToken(event.target.value)}
+              placeholder={t("admin.tokenPlaceholder")}
+              value={token}
+            />
+            <Button className="sm:self-end" onClick={saveToken} type="button" variant="secondary">
+              {t("admin.saveToken")}
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/75">
+            <p>{t("admin.tokenHint")}</p>
+            <p>
+              {t("admin.mode")}: {source === "api" ? t("admin.modeApi") : t("admin.modeMock")}
+            </p>
+          </div>
+        </section>
+
+        <section className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+          <form className="glass-card space-y-4 p-4 sm:p-5" onSubmit={handleSubmit}>
+            <h2 className="text-xl font-bold text-white">
+              {form.id ? t("admin.formEdit", { id: form.id }) : t("admin.formCreate")}
+            </h2>
+
+            <Input
+              label={t("admin.name")}
+              onChange={(event) => setField("name", event.target.value)}
+              value={form.name}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input
+                label={`${t("admin.price")} (${t("common.currency")})`}
+                min="0"
+                onChange={(event) => setField("price", event.target.value)}
+                step="0.01"
+                type="number"
+                value={form.price}
+              />
+              <Input
+                label={t("admin.stock")}
+                min="0"
+                onChange={(event) => setField("stock", event.target.value)}
+                step="1"
+                type="number"
+                value={form.stock}
+              />
             </div>
-          </header>
-
-          <section className="glass-card token-bar">
-            <label>
-              Admin Token
-              <input
-                placeholder="Enter x-admin-token"
-                value={token}
-                onChange={(event) => setToken(event.target.value)}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input
+                label={t("admin.category")}
+                onChange={(event) => setField("category", event.target.value)}
+                value={form.category}
+              />
+              <Input
+                label={t("admin.emoji")}
+                onChange={(event) => setField("emoji", event.target.value)}
+                value={form.emoji}
+              />
+            </div>
+            <Input
+              label={t("admin.image")}
+              onChange={(event) => setField("image_url", event.target.value)}
+              value={form.image_url}
+            />
+            <label className="flex flex-col gap-2 text-sm font-medium text-white/90">
+              <span>{t("admin.description")}</span>
+              <textarea
+                className="surface-field min-h-[120px] resize-y"
+                onChange={(event) => setField("description", event.target.value)}
+                value={form.description}
               />
             </label>
-            <button className="btn primary" type="button" onClick={saveToken}>
-              Save
-            </button>
-            <span className="hint">Set this to your backend ADMIN_TOKEN value.</span>
-          </section>
 
-          <section className="glass-card form-card">
-            <h2>Add / Edit Product</h2>
-            <form className="form-grid" onSubmit={onSubmit}>
-              <input type="hidden" value={form.id} readOnly />
-              <input type="hidden" value={form.image_url} readOnly />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button type="submit" variant="primary">
+                {form.id ? t("admin.submitUpdate") : t("admin.submitCreate")}
+              </Button>
+              {form.id ? (
+                <Button onClick={resetForm} type="button" variant="ghost">
+                  {t("admin.cancelEdit")}
+                </Button>
+              ) : null}
+            </div>
+          </form>
 
-              <label>
-                Product Name
-                <input
-                  required
-                  value={form.name}
-                  onChange={(event) => setField("name", event.target.value)}
-                />
-              </label>
-              <label>
-                Price (MAD)
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  value={form.price}
-                  onChange={(event) => setField("price", event.target.value)}
-                />
-              </label>
-              <label>
-                Category
-                <input
-                  required
-                  value={form.category}
-                  onChange={(event) => setField("category", event.target.value)}
-                />
-              </label>
-              <label>
-                Emoji
-                <input value={form.emoji} onChange={(event) => setField("emoji", event.target.value)} />
-              </label>
-              <label>
-                Stock
-                <input
-                  type="number"
-                  step="1"
-                  min="0"
-                  required
-                  value={form.stock}
-                  onChange={(event) => setField("stock", event.target.value)}
-                />
-              </label>
-              <label>
-                Product Image
-                <input key={fileInputKey} type="file" accept="image/*" onChange={onFileChange} />
-              </label>
-
-              <label className="wide">
-                Description
-                <textarea
-                  required
-                  value={form.description}
-                  onChange={(event) => setField("description", event.target.value)}
-                />
-              </label>
-
-              <div className="preview-box">
-                <div className="small">Preview</div>
-                <img
-                  alt="preview"
-                  src={imagePreview}
-                  style={{ display: imagePreview ? "block" : "none" }}
-                />
-              </div>
-
-              <div className="buttons wide">
-                <button className="btn primary" type="submit">
-                  Save Product
-                </button>
-                <button
-                  className="btn ghost"
-                  type="button"
-                  onClick={() => {
-                    resetForm();
-                    showToast("Edit canceled");
-                  }}
-                >
-                  Cancel
-                </button>
-                <button className="btn ghost" type="button" onClick={loadProducts}>
-                  Refresh List
-                </button>
-              </div>
-            </form>
-          </section>
-
-          <section className="glass-card">
-            <div className="list-head">
-              <h1>Products Management</h1>
-              <div className="head-actions">
-                <input
-                  placeholder="Search products..."
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
-              </div>
+          <div className="glass-card space-y-4 p-4 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl font-bold text-white">{t("admin.listTitle")}</h2>
+              <Input
+                className="sm:w-[280px]"
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t("admin.searchPlaceholder")}
+                value={query}
+              />
             </div>
 
-            <div className="table-wrap">
-              <div className="table-head">
-                <span>Image</span>
-                <span>Product Name</span>
-                <span>Price</span>
-                <span>Stock</span>
-                <span>Status</span>
-                <span>Actions</span>
+            {loading ? (
+              <div className="glass-card h-44 animate-pulse" />
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-white/20">
+                <table className="min-w-full text-sm text-white/90">
+                  <thead className="bg-black/25 text-xs uppercase tracking-wide text-white/70">
+                    <tr>
+                      <th className="px-3 py-3 text-start">{t("admin.tableImage")}</th>
+                      <th className="px-3 py-3 text-start">{t("admin.tableProduct")}</th>
+                      <th className="px-3 py-3 text-start">{t("admin.tablePrice")}</th>
+                      <th className="px-3 py-3 text-start">{t("admin.tableStock")}</th>
+                      <th className="px-3 py-3 text-start">{t("admin.tableStatus")}</th>
+                      <th className="px-3 py-3 text-start">{t("admin.tableActions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProducts.map((product) => {
+                      const imageUrl = resolveProductImage(product);
+                      const inStock = Number(product.stock) > 0;
+                      return (
+                        <tr className="border-t border-white/10" key={product.id}>
+                          <td className="px-3 py-3">
+                            {imageUrl ? (
+                              <img
+                                alt={product.name}
+                                className="h-10 w-14 rounded-lg border border-white/20 object-cover"
+                                src={imageUrl}
+                              />
+                            ) : (
+                              <div className="grid h-10 w-14 place-items-center rounded-lg border border-white/20 bg-black/25">
+                                {product.emoji || "???"}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-3 py-3">
+                            <p className="font-semibold">{product.name}</p>
+                            <p className="text-xs text-white/70">{product.category}</p>
+                          </td>
+                          <td className="px-3 py-3">
+                            {formatPrice(product.price, i18n.language)} {t("common.currency")}
+                          </td>
+                          <td className="px-3 py-3">{product.stock}</td>
+                          <td className="px-3 py-3">
+                            <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs">
+                              {inStock ? t("common.active") : t("common.outOfStock")}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3">
+                            <div className="flex flex-wrap gap-2">
+                              <Button onClick={() => startEdit(product)} size="sm" type="button" variant="secondary">
+                                {t("actions.edit")}
+                              </Button>
+                              <Button onClick={() => handleDelete(product.id)} size="sm" type="button" variant="danger">
+                                {t("actions.delete")}
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
+            )}
 
-              <div className="list">
-                {filteredProducts.map((product) => {
-                  const imageUrl = product.image_url ? toAbsoluteUploadUrl(product.image_url) : "";
-                  const inStock = Number(product.stock) > 0;
-                  return (
-                    <div className="row-item" key={product.id}>
-                      <div>
-                        {imageUrl ? (
-                          <img className="p-thumb" src={imageUrl} alt={product.name} />
-                        ) : (
-                          <div className="p-thumb p-thumb-fallback">{product.emoji || "Item"}</div>
-                        )}
-                      </div>
-                      <div>
-                        <div className="itemName">{product.name}</div>
-                        <div className="itemMeta">{product.description || "No description"}</div>
-                        <div className="itemMeta">
-                          {product.category} - #{Number(product.id)}
-                        </div>
-                      </div>
-                      <div>
-                        <strong>{money(product.price)} MAD</strong>
-                      </div>
-                      <div>{Number(product.stock)}</div>
-                      <div>
-                        <span className={`pill ${inStock ? "ok" : "bad"}`}>{inStock ? "Active" : "Out"}</span>
-                      </div>
-                      <div className="itemActions">
-                        <button className="btn primary" type="button" onClick={() => startEdit(product)}>
-                          Edit
-                        </button>
-                        <button className="btn ghost" type="button" onClick={() => deleteProduct(product.id)}>
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            {!loading && filteredProducts.length === 0 ? (
+              <div className="glass-card p-5 text-center text-sm text-white/75">{t("admin.empty")}</div>
+            ) : null}
+          </div>
+        </section>
 
-            <div className="empty" hidden={filteredProducts.length !== 0}>
-              No products found.
-            </div>
-          </section>
-
-          <section className="glass-card">
-            <div className="list-head">
-              <h2>Orders</h2>
-              <button className="btn ghost" type="button" onClick={loadOrders}>
-                Load Orders
-              </button>
-            </div>
-
-            <div className="orders">
-              {orders.map((order) => {
-                const phone = String(order.phone || "").replace(/\s+/g, "");
-                const whatsappLink = phone ? `https://wa.me/${phone.replace(/^0/, "212")}` : "";
-
-                return (
-                  <div className="item" key={order.id}>
-                    <div className="itemTop">
-                      <div>
-                        <div className="itemName">
-                          Order #{order.id} <span className="pill">{String(order.status || "NEW")}</span>
-                        </div>
-                        <div className="itemMeta">
-                          {order.customer_name} - {order.phone}
-                        </div>
-                        <div className="itemMeta">{order.address}</div>
-                        {order.notes ? <div className="itemMeta">Notes: {order.notes}</div> : null}
-                      </div>
-                      <div className="order-total">{money(order.total)} MAD</div>
-                    </div>
-
-                    <div className="itemActions">
-                      {whatsappLink ? (
-                        <a className="btn primary" target="_blank" rel="noreferrer" href={whatsappLink}>
-                          WhatsApp
-                        </a>
-                      ) : null}
-
-                      {["CONFIRMED", "SHIPPED", "DONE", "CANCELED"].map((status) => (
-                        <button
-                          key={status}
-                          className="btn ghost"
-                          type="button"
-                          onClick={() => updateOrderStatus(order.id, status)}
-                        >
-                          {status}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="itemMeta orders-items">Items: {String(order.items_json || "")}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        </main>
-      </div>
+        <Footer />
+      </GlassCard>
 
       <Toast message={toastMessage} />
-    </>
+    </LayoutShell>
   );
 }
-
