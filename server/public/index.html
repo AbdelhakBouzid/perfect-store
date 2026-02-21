@@ -2,122 +2,17 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Perfect Store</title>
-  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="container topbar-row">
-      <div class="mode-pill">🌙 Dark Mode</div>
-      <nav class="nav-links">
-        <a href="#">Language ▾</a>
-        <a href="./login.html">Sign In</a>
-        <a href="./register.html">Register</a>
-      </nav>
-    </div>
-  </header>
+  <div id="root"></div>
 
-  <section class="hero">
-    <div class="container hero-content">
-      <h1>Latest <span>Tech &amp; Gadgets</span></h1>
-      <p>Find the Best Deals on Electronics</p>
-      <div class="hero-meta">
-        <span id="modeInfo">Mode: API</span>
-        <span>Products: <b id="kpiProducts">—</b></span>
-      </div>
-    </div>
-  </section>
-
-  <section class="container toolbar">
-    <div class="tabs-row">
-      <select id="cat" class="tab-select"></select>
-      <input id="q" placeholder="Search products..." />
-      <select id="sort" class="select">
-        <option value="featured">Featured</option>
-        <option value="priceAsc">Price: Low to High</option>
-        <option value="priceDesc">Price: High to Low</option>
-        <option value="nameAsc">Name: A → Z</option>
-      </select>
-      <button id="refresh" class="btn ghost">Refresh</button>
-      <button id="openCart" class="btn primary">Cart <span id="count" class="badge">0</span></button>
-    </div>
-    <div class="small muted" id="resultInfo">—</div>
-  </section>
-
-  <main class="container">
-    <section id="grid" class="grid"></section>
-    <div id="emptyState" class="empty" hidden>
-      <div class="empty-emoji">😕</div>
-      <div class="empty-title">No products found</div>
-      <div class="empty-sub">Change category or search query.</div>
-    </div>
-  </main>
-
-  <aside id="cart" class="drawer" aria-hidden="true">
-    <div class="drawer-head">
-      <div>
-        <div class="drawer-title">Shopping Cart</div>
-        <div class="small muted" id="cartHint">—</div>
-      </div>
-      <button id="closeCart" class="btn ghost">✕</button>
-    </div>
-
-    <div id="items" class="drawer-body"></div>
-
-    <div class="drawer-foot">
-      <div class="totals">
-        <div class="row"><span>Subtotal</span><b id="subtotal">0</b> <span class="muted">MAD</span></div>
-        <div class="row"><span>Shipping</span><b id="shipping">0</b> <span class="muted">MAD</span></div>
-        <div class="row total"><span>Total</span><b id="total">0</b> <span class="muted">MAD</span></div>
-      </div>
-
-      <button id="openCheckout" class="btn primary">Checkout</button>
-      <button id="clear" class="btn ghost">Clear Cart</button>
-      <div class="small muted">Cash on delivery.</div>
-    </div>
-  </aside>
-
-  <div id="backdrop" class="backdrop" hidden></div>
-
-  <section id="checkout" class="modal" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <div>
-          <div class="modal-title">Checkout</div>
-          <div class="small muted">Fill the form and confirm your order.</div>
-        </div>
-        <button id="closeCheckout" class="btn ghost">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="form-row">
-          <label>Full Name
-            <input id="name" placeholder="John Doe" />
-          </label>
-          <label>Phone
-            <input id="phone" placeholder="+212..." />
-          </label>
-        </div>
-
-        <label>Address
-          <input id="address" placeholder="City / Street..." />
-        </label>
-
-        <label>Notes (optional)
-          <textarea id="notes" placeholder="Color / size / time..."></textarea>
-        </label>
-
-        <div class="modal-foot">
-          <button id="checkoutBtn" class="btn primary">Confirm Order</button>
-          <button id="cancelCheckout" class="btn ghost">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div id="toast" class="toast" hidden></div>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="/config.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-router-dom@6.30.1/dist/umd/react-router-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="env,react" src="/react/main.jsx"></script>
 </body>
 </html>

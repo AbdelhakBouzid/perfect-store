@@ -21,6 +21,8 @@ npm run dev
 
 ثم افتح:
 - `http://localhost:5000/` المتجر
+- `http://localhost:5000/auth` صفحة تسجيل الدخول (تصميم SupShare)
+- `http://localhost:5000/auth/register` صفحة إنشاء الحساب
 - `http://localhost:5000/admin` لوحة الإدارة
 - `http://localhost:5000/api/health` فحص الخدمة
 

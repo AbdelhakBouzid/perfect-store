@@ -3,19 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login — Perfect Store</title>
+  <title>SupShare Style Login — Perfect Store</title>
   <link rel="stylesheet" href="auth.css" />
 </head>
 <body>
-  <main class="auth-card">
-    <h1 data-i18n="login">Login</h1>
-    <select id="lang"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select>
-    <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-    <button id="submitBtn" data-mode="login" data-i18n="login">Login</button>
-    <p><a href="./register.html" data-i18n="noAccount">Create account</a></p>
-    <p><a href="./index.html">Back to store</a></p>
+  <main class="auth-layout">
+    <section class="brand-panel">
+      <div class="brand-copy">Share the Knowledge, Spread the Fun with SupShare</div>
+    </section>
+
+    <section class="form-panel">
+      <div class="form-shell">
+        <h1 class="form-title" data-i18n="login">Sign in</h1>
+
+        <input id="email" class="input-field" type="email" placeholder="Email" />
+        <input id="password" class="input-field" type="password" placeholder="Password" />
+
+        <div class="forgot-pass"><a href="#">Forgot password ?</a></div>
+
+        <button id="submitBtn" class="input-submit" data-mode="login" data-i18n="login">Sign in</button>
+        <a class="input-submit secondary" href="./register.html" role="button">Or Sign up</a>
+      </div>
+
+      <nav class="mini-footer">
+        <a href="#" id="langEn">English(UK)</a>
+        <a href="#" id="langFr">Français(FR)</a>
+        <a href="#" id="langAr">العربية</a>
+      </nav>
+    </section>
   </main>
+
   <div id="toast" hidden></div>
   <script src="config.js"></script>
   <script src="auth.js"></script>
