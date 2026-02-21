@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Toast from "../components/Toast";
-import Footer from "../components/layout/Footer";
-import GlassCard from "../components/layout/GlassCard";
-import LayoutShell from "../components/layout/LayoutShell";
-import TopBar from "../components/layout/TopBar";
+import SiteLayout from "../components/layout/SiteLayout";
+import Container from "../components/layout/Container";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import Toast from "../components/Toast";
 import useToast from "../hooks/useToast";
 import { requestJson } from "../lib/api";
 import { API_URL } from "../lib/config";
@@ -20,7 +18,7 @@ const INITIAL_FORM = {
   price: "",
   category: "",
   stock: "",
-  emoji: "???",
+  emoji: "🛍️",
   image_url: "",
   description: ""
 };
@@ -66,13 +64,6 @@ export default function AdminPage() {
     loadProducts().catch(() => showToast(t("admin.loadFailed")));
   }, []);
 
-  const links = [
-    { to: "/products", label: t("nav.products") },
-    { to: "/login", label: t("nav.login") },
-    { to: "/register", label: t("nav.register") },
-    { to: "/admin", label: t("nav.admin") }
-  ];
-
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return products;
@@ -104,7 +95,7 @@ export default function AdminPage() {
       price: String(product.price || ""),
       category: product.category || "",
       stock: String(product.stock || ""),
-      emoji: product.emoji || "???",
+      emoji: product.emoji || "🛍️",
       image_url: product.image_url || "",
       description: product.description || ""
     });
@@ -118,7 +109,7 @@ export default function AdminPage() {
       price: Number(form.price),
       category: form.category.trim(),
       stock: Number(form.stock),
-      emoji: form.emoji.trim() || "???",
+      emoji: form.emoji.trim() || "🛍️",
       image_url: form.image_url.trim(),
       description: form.description.trim()
     };
@@ -173,8 +164,9 @@ export default function AdminPage() {
       const nextId = current.length ? Math.max(...current.map((item) => Number(item.id))) + 1 : 1;
       return [{ id: nextId, created_at: new Date().toISOString(), ...payload }, ...current];
     });
-    resetForm();
+
     showToast(t("admin.savedLocal"));
+    resetForm();
   }
 
   async function handleDelete(productId) {
@@ -195,14 +187,12 @@ export default function AdminPage() {
   }
 
   return (
-    <LayoutShell>
-      <GlassCard className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-8">
-        <TopBar buyNowTo="/products" cartCount={products.length} links={links} />
-
-        <section className="glass-card space-y-4 p-4 sm:p-5">
+    <SiteLayout>
+      <Container className="space-y-6">
+        <section className="surface-card space-y-4 p-5">
           <div className="space-y-1">
-            <h1 className="text-2xl font-extrabold text-white">{t("admin.title")}</h1>
-            <p className="text-sm text-white/75">{t("admin.subtitle")}</p>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">{t("admin.title")}</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t("admin.subtitle")}</p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
@@ -217,7 +207,7 @@ export default function AdminPage() {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/75">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
             <p>{t("admin.tokenHint")}</p>
             <p>
               {t("admin.mode")}: {source === "api" ? t("admin.modeApi") : t("admin.modeMock")}
@@ -226,8 +216,8 @@ export default function AdminPage() {
         </section>
 
         <section className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
-          <form className="glass-card space-y-4 p-4 sm:p-5" onSubmit={handleSubmit}>
-            <h2 className="text-xl font-bold text-white">
+          <form className="surface-card space-y-4 p-5" onSubmit={handleSubmit}>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
               {form.id ? t("admin.formEdit", { id: form.id }) : t("admin.formCreate")}
             </h2>
 
@@ -271,10 +261,10 @@ export default function AdminPage() {
               onChange={(event) => setField("image_url", event.target.value)}
               value={form.image_url}
             />
-            <label className="flex flex-col gap-2 text-sm font-medium text-white/90">
+            <label className="flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
               <span>{t("admin.description")}</span>
               <textarea
-                className="surface-field min-h-[120px] resize-y"
+                className="input-base min-h-[120px] resize-y"
                 onChange={(event) => setField("description", event.target.value)}
                 value={form.description}
               />
@@ -292,9 +282,9 @@ export default function AdminPage() {
             </div>
           </form>
 
-          <div className="glass-card space-y-4 p-4 sm:p-5">
+          <div className="surface-card space-y-4 p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-xl font-bold text-white">{t("admin.listTitle")}</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t("admin.listTitle")}</h2>
               <Input
                 className="sm:w-[280px]"
                 onChange={(event) => setQuery(event.target.value)}
@@ -304,11 +294,11 @@ export default function AdminPage() {
             </div>
 
             {loading ? (
-              <div className="glass-card h-44 animate-pulse" />
+              <div className="surface-card h-44 animate-pulse" />
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-white/20">
-                <table className="min-w-full text-sm text-white/90">
-                  <thead className="bg-black/25 text-xs uppercase tracking-wide text-white/70">
+              <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-300">
                     <tr>
                       <th className="px-3 py-3 text-start">{t("admin.tableImage")}</th>
                       <th className="px-3 py-3 text-start">{t("admin.tableProduct")}</th>
@@ -323,30 +313,30 @@ export default function AdminPage() {
                       const imageUrl = resolveProductImage(product);
                       const inStock = Number(product.stock) > 0;
                       return (
-                        <tr className="border-t border-white/10" key={product.id}>
+                        <tr className="border-t border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-200" key={product.id}>
                           <td className="px-3 py-3">
                             {imageUrl ? (
                               <img
                                 alt={product.name}
-                                className="h-10 w-14 rounded-lg border border-white/20 object-cover"
+                                className="h-10 w-14 rounded-lg border border-slate-200 object-cover dark:border-slate-700"
                                 src={imageUrl}
                               />
                             ) : (
-                              <div className="grid h-10 w-14 place-items-center rounded-lg border border-white/20 bg-black/25">
-                                {product.emoji || "???"}
+                              <div className="grid h-10 w-14 place-items-center rounded-lg border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800">
+                                {product.emoji || "🛍️"}
                               </div>
                             )}
                           </td>
                           <td className="px-3 py-3">
                             <p className="font-semibold">{product.name}</p>
-                            <p className="text-xs text-white/70">{product.category}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{product.category}</p>
                           </td>
                           <td className="px-3 py-3">
                             {formatPrice(product.price, i18n.language)} {t("common.currency")}
                           </td>
                           <td className="px-3 py-3">{product.stock}</td>
                           <td className="px-3 py-3">
-                            <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs">
+                            <span className="rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs dark:border-slate-600 dark:bg-slate-800">
                               {inStock ? t("common.active") : t("common.outOfStock")}
                             </span>
                           </td>
@@ -369,15 +359,13 @@ export default function AdminPage() {
             )}
 
             {!loading && filteredProducts.length === 0 ? (
-              <div className="glass-card p-5 text-center text-sm text-white/75">{t("admin.empty")}</div>
+              <div className="surface-card p-5 text-center text-sm text-slate-500 dark:text-slate-400">{t("admin.empty")}</div>
             ) : null}
           </div>
         </section>
-
-        <Footer />
-      </GlassCard>
+      </Container>
 
       <Toast message={toastMessage} />
-    </LayoutShell>
+    </SiteLayout>
   );
 }

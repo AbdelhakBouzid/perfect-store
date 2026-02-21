@@ -6,21 +6,29 @@ const resources = {
   en: {
     translation: {
       brand: {
-        name: "Perfect Store",
-        tagline: "Blue Glass Commerce"
+        name: "ba2i3 Store",
+        tagline: "Smart shopping, premium experience"
       },
       meta: {
-        products: "Products - Perfect Store",
-        productDetails: "Product details - Perfect Store",
-        login: "Login - Perfect Store",
-        register: "Register - Perfect Store",
-        admin: "Admin - Perfect Store"
+        products: "Products - ba2i3 Store",
+        productDetails: "Product details - ba2i3 Store",
+        login: "Login - ba2i3 Store",
+        register: "Register - ba2i3 Store",
+        admin: "Admin - ba2i3 Store",
+        checkout: "Checkout - ba2i3 Store",
+        profile: "Profile - ba2i3 Store",
+        settings: "Settings - ba2i3 Store",
+        policy: "Policy - ba2i3 Store"
       },
       nav: {
         products: "Products",
         login: "Login",
         register: "Register",
-        admin: "Admin"
+        admin: "Admin",
+        cart: "Cart",
+        profile: "Profile",
+        settings: "Settings",
+        checkout: "Checkout"
       },
       language: {
         en: "EN",
@@ -50,70 +58,66 @@ const resources = {
         noResultsHint: "Try another search or category.",
         source: "Data source: {{source}}",
         sourceApi: "API",
-        sourceMock: "Local mock",
+        sourceMock: "Local fallback",
         currency: "MAD",
         status: "Status",
         active: "Active",
         outOfStock: "Out of stock"
       },
       footer: {
-        privacy: "Privacy",
-        terms: "Terms",
-        contact: "Contact",
-        refund: "Refund",
+        privacyPolicy: "Privacy Policy",
+        termsOfService: "Terms of Service",
+        refundPolicy: "Refund Policy",
+        shippingPolicy: "Shipping Policy",
         rights: "All rights reserved."
+      },
+      contact: {
+        button: "Contact Us",
+        title: "Contact Us",
+        subtitle: "Send us your message and we will reply soon.",
+        email: "Email",
+        message: "Message",
+        messagePlaceholder: "How can we help you?",
+        submit: "Send message",
+        sending: "Sending...",
+        success: "Message sent successfully.",
+        failed: "Unable to send message."
       },
       products: {
         title: "Products",
-        subtitle: "Modern devices in a unified blue glass system.",
-        featured: "Featured product",
-        bestSeller: "Best seller",
-        newest: "Newest",
+        subtitle: "Discover our curated collection with a clean premium catalog.",
+        featured: "Featured Product",
+        featuredHint: "Best seller this week",
         searchPlaceholder: "Search products...",
         categoryPlaceholder: "Select category",
-        browse: "Browse products",
         results: "Results: {{count}}",
         addToast: "Added to cart.",
         cardFallback: "No image",
         heroFallback: "Featured image",
-        sectionTitle: "Product catalog"
+        sectionTitle: "Catalog",
+        compactMode: "Compact cards"
       },
       product: {
         notFoundTitle: "Product not found",
-        notFoundHint: "This product does not exist in the selected source.",
-        details: "Product details",
+        notFoundHint: "This product is unavailable right now.",
         shippingNote: "Fast delivery and secure checkout.",
         related: "Related products",
         addToast: "Product added to cart."
       },
       auth: {
-        leftMessageTop: "Share the Knowledge, Spread the Fun",
-        leftMessageBottom: "with SupShare",
         loginTitle: "Sign in",
-        registerTitle: "Sign up",
-        loginSubtitle: "Simplify your career, sign in effortlessly",
-        registerSubtitle: "Simplify your career, sign up effortlessly",
+        registerTitle: "Create account",
+        loginSubtitle: "Access your customer space quickly.",
+        registerSubtitle: "Create your account in seconds.",
         firstName: "First name",
         lastName: "Last name",
         email: "Email",
         password: "Password",
         forgotPassword: "Forgot password?",
-        day: "Day",
-        month: "Month",
-        year: "Year",
-        dateOfBirth: "Date of birth",
-        gender: "Gender",
-        male: "Male",
-        female: "Female",
-        termsPrefix: "By signing up, you acknowledge that you have read and agree to our",
-        termsService: "Terms of Service",
-        termsConnector: "and",
-        termsPrivacy: "Privacy Policy.",
-        termsSuffix: "You also consent to receive email or SMS communications from us, which you can opt out of at any time.",
         loginButton: "Sign in",
-        registerButton: "Sign up",
-        switchToLogin: "Or Sign in",
-        switchToRegister: "Or Sign up",
+        registerButton: "Create account",
+        switchToLogin: "Already have an account?",
+        switchToRegister: "Don't have an account?",
         missingFields: "Please complete all required fields.",
         loginSuccess: "Signed in successfully.",
         registerSuccess: "Account created successfully.",
@@ -121,10 +125,10 @@ const resources = {
       },
       admin: {
         title: "Admin dashboard",
-        subtitle: "Manage products with the same glass design language.",
+        subtitle: "Manage products with a professional control panel.",
         mode: "Mode",
         modeApi: "Connected to API",
-        modeMock: "Mock mode (offline fallback)",
+        modeMock: "Local fallback mode",
         tokenLabel: "Admin token",
         tokenPlaceholder: "Enter x-admin-token",
         tokenHint: "Required for backend create/update/delete.",
@@ -157,27 +161,76 @@ const resources = {
         deletedApi: "Deleted from API.",
         deletedLocal: "Deleted locally.",
         loadFailed: "Could not load products."
+      },
+      checkout: {
+        title: "Secure Checkout",
+        subtitle: "Pay safely with Stripe Payment Element.",
+        empty: "Your cart is empty.",
+        goShop: "Continue shopping",
+        summary: "Order summary",
+        cardTitle: "Card payment",
+        payNow: "Pay now",
+        processing: "Processing...",
+        success: "Payment completed successfully.",
+        createIntentError: "Failed to initialize payment."
+      },
+      profile: {
+        title: "Profile",
+        subtitle: "Customer profile area coming soon."
+      },
+      settings: {
+        title: "Settings",
+        subtitle: "Adjust language and theme preferences.",
+        appearance: "Appearance",
+        language: "Language"
+      },
+      policy: {
+        back: "Back to store",
+        privacyPolicy: {
+          title: "Privacy Policy",
+          body: "We collect only the information needed to process your orders and improve service quality."
+        },
+        termsOfService: {
+          title: "Terms of Service",
+          body: "By using ba2i3 Store, you agree to comply with store policies and secure checkout rules."
+        },
+        refundPolicy: {
+          title: "Refund Policy",
+          body: "Eligible products can be refunded according to product condition and return window."
+        },
+        shippingPolicy: {
+          title: "Shipping Policy",
+          body: "Shipping times vary by region. Tracking details are shared once the order is confirmed."
+        }
       }
     }
   },
   fr: {
     translation: {
       brand: {
-        name: "Perfect Store",
-        tagline: "Commerce Blue Glass"
+        name: "ba2i3 Store",
+        tagline: "Shopping intelligent, experience premium"
       },
       meta: {
-        products: "Produits - Perfect Store",
-        productDetails: "Détails produit - Perfect Store",
-        login: "Connexion - Perfect Store",
-        register: "Inscription - Perfect Store",
-        admin: "Admin - Perfect Store"
+        products: "Produits - ba2i3 Store",
+        productDetails: "Detail produit - ba2i3 Store",
+        login: "Connexion - ba2i3 Store",
+        register: "Inscription - ba2i3 Store",
+        admin: "Admin - ba2i3 Store",
+        checkout: "Paiement - ba2i3 Store",
+        profile: "Profil - ba2i3 Store",
+        settings: "Parametres - ba2i3 Store",
+        policy: "Politique - ba2i3 Store"
       },
       nav: {
         products: "Produits",
         login: "Connexion",
         register: "Inscription",
-        admin: "Admin"
+        admin: "Admin",
+        cart: "Panier",
+        profile: "Profil",
+        settings: "Parametres",
+        checkout: "Paiement"
       },
       language: {
         en: "EN",
@@ -200,108 +253,104 @@ const resources = {
         submit: "Valider"
       },
       common: {
-        allCategories: "Toutes les catégories",
+        allCategories: "Toutes categories",
         search: "Recherche",
         loading: "Chargement...",
-        noResults: "Aucun produit trouvé",
-        noResultsHint: "Essayez une autre recherche ou catégorie.",
-        source: "Source de données : {{source}}",
+        noResults: "Aucun produit trouve",
+        noResultsHint: "Essayez une autre recherche ou categorie.",
+        source: "Source de donnees : {{source}}",
         sourceApi: "API",
-        sourceMock: "Mock local",
+        sourceMock: "Secours local",
         currency: "MAD",
         status: "Statut",
         active: "Actif",
-        outOfStock: "Rupture de stock"
+        outOfStock: "Rupture"
       },
       footer: {
-        privacy: "Confidentialité",
-        terms: "Conditions",
-        contact: "Contact",
-        refund: "Remboursement",
-        rights: "Tous droits réservés."
+        privacyPolicy: "Politique de confidentialite",
+        termsOfService: "Conditions de service",
+        refundPolicy: "Politique de remboursement",
+        shippingPolicy: "Politique de livraison",
+        rights: "Tous droits reserves."
+      },
+      contact: {
+        button: "Contactez-nous",
+        title: "Contactez-nous",
+        subtitle: "Envoyez votre message et notre equipe vous repondra.",
+        email: "Email",
+        message: "Message",
+        messagePlaceholder: "Comment pouvons-nous vous aider ?",
+        submit: "Envoyer",
+        sending: "Envoi...",
+        success: "Message envoye avec succes.",
+        failed: "Impossible d'envoyer le message."
       },
       products: {
         title: "Produits",
-        subtitle: "Appareils modernes dans une interface blue glass unifiée.",
+        subtitle: "Decouvrez notre selection avec un catalogue premium et clair.",
         featured: "Produit vedette",
-        bestSeller: "Meilleure vente",
-        newest: "Nouveau",
+        featuredHint: "Meilleure vente de la semaine",
         searchPlaceholder: "Rechercher des produits...",
-        categoryPlaceholder: "Choisir une catégorie",
-        browse: "Parcourir les produits",
-        results: "Résultats : {{count}}",
-        addToast: "Ajouté au panier.",
+        categoryPlaceholder: "Choisir une categorie",
+        results: "Resultats : {{count}}",
+        addToast: "Ajoute au panier.",
         cardFallback: "Sans image",
         heroFallback: "Image vedette",
-        sectionTitle: "Catalogue produits"
+        sectionTitle: "Catalogue",
+        compactMode: "Cartes compactes"
       },
       product: {
         notFoundTitle: "Produit introuvable",
-        notFoundHint: "Ce produit n'existe pas dans la source sélectionnée.",
-        details: "Détails produit",
-        shippingNote: "Livraison rapide et paiement sécurisé.",
+        notFoundHint: "Ce produit est indisponible pour le moment.",
+        shippingNote: "Livraison rapide et paiement securise.",
         related: "Produits similaires",
-        addToast: "Produit ajouté au panier."
+        addToast: "Produit ajoute au panier."
       },
       auth: {
-        leftMessageTop: "Partagez la connaissance, diffusez le fun",
-        leftMessageBottom: "avec SupShare",
         loginTitle: "Connexion",
-        registerTitle: "Inscription",
-        loginSubtitle: "Simplifiez votre parcours, connectez-vous facilement",
-        registerSubtitle: "Simplifiez votre parcours, inscrivez-vous facilement",
-        firstName: "Prénom",
+        registerTitle: "Creer un compte",
+        loginSubtitle: "Accedez rapidement a votre espace client.",
+        registerSubtitle: "Creez votre compte en quelques secondes.",
+        firstName: "Prenom",
         lastName: "Nom",
         email: "Email",
         password: "Mot de passe",
-        forgotPassword: "Mot de passe oublié ?",
-        day: "Jour",
-        month: "Mois",
-        year: "Année",
-        dateOfBirth: "Date de naissance",
-        gender: "Genre",
-        male: "Homme",
-        female: "Femme",
-        termsPrefix: "En vous inscrivant, vous reconnaissez avoir lu et accepté nos",
-        termsService: "Conditions d'utilisation",
-        termsConnector: "et notre",
-        termsPrivacy: "Politique de confidentialité.",
-        termsSuffix: "Vous acceptez aussi de recevoir des emails ou SMS, avec possibilité de retrait à tout moment.",
+        forgotPassword: "Mot de passe oublie ?",
         loginButton: "Connexion",
-        registerButton: "Inscription",
-        switchToLogin: "Ou Connexion",
-        switchToRegister: "Ou Inscription",
+        registerButton: "Creer un compte",
+        switchToLogin: "Vous avez deja un compte ?",
+        switchToRegister: "Vous n'avez pas de compte ?",
         missingFields: "Veuillez remplir tous les champs obligatoires.",
-        loginSuccess: "Connexion réussie.",
-        registerSuccess: "Compte créé avec succès.",
-        requestFailed: "Échec de la requête."
+        loginSuccess: "Connexion reussie.",
+        registerSuccess: "Compte cree avec succes.",
+        requestFailed: "Echec de la requete."
       },
       admin: {
         title: "Tableau de bord admin",
-        subtitle: "Gérez les produits avec le même style glass.",
+        subtitle: "Gerez les produits avec un panneau professionnel.",
         mode: "Mode",
-        modeApi: "Connecté à l'API",
-        modeMock: "Mode mock (secours hors ligne)",
+        modeApi: "Connecte a l'API",
+        modeMock: "Mode secours local",
         tokenLabel: "Token admin",
         tokenPlaceholder: "Saisir x-admin-token",
-        tokenHint: "Nécessaire pour créer/modifier/supprimer via backend.",
+        tokenHint: "Necessaire pour creer/modifier/supprimer via backend.",
         saveToken: "Sauvegarder le token",
-        tokenSaved: "Token sauvegardé.",
+        tokenSaved: "Token sauvegarde.",
         tokenRequired: "Ajoutez un token pour synchroniser avec le backend.",
         formCreate: "Ajouter un produit",
         formEdit: "Modifier produit #{{id}}",
         name: "Nom du produit",
         price: "Prix",
-        category: "Catégorie",
+        category: "Categorie",
         stock: "Stock",
         emoji: "Emoji",
         image: "URL image",
         description: "Description",
-        submitCreate: "Ajouter",
-        submitUpdate: "Mettre à jour",
-        cancelEdit: "Annuler la modification",
+        submitCreate: "Ajouter produit",
+        submitUpdate: "Mettre a jour",
+        cancelEdit: "Annuler modification",
         listTitle: "Gestion des produits",
-        searchPlaceholder: "Rechercher par nom, catégorie ou description...",
+        searchPlaceholder: "Recherche par nom, categorie ou description...",
         tableImage: "Image",
         tableProduct: "Produit",
         tablePrice: "Prix",
@@ -309,32 +358,81 @@ const resources = {
         tableStatus: "Statut",
         tableActions: "Actions",
         empty: "Aucun produit disponible.",
-        savedApi: "Sauvegardé dans l'API.",
-        savedLocal: "Sauvegardé localement.",
-        deletedApi: "Supprimé dans l'API.",
-        deletedLocal: "Supprimé localement.",
+        savedApi: "Sauvegarde dans l'API.",
+        savedLocal: "Sauvegarde locale.",
+        deletedApi: "Supprime de l'API.",
+        deletedLocal: "Supprime localement.",
         loadFailed: "Impossible de charger les produits."
+      },
+      checkout: {
+        title: "Paiement securise",
+        subtitle: "Payez en toute securite avec Stripe Payment Element.",
+        empty: "Votre panier est vide.",
+        goShop: "Continuer les achats",
+        summary: "Resume de commande",
+        cardTitle: "Paiement par carte",
+        payNow: "Payer maintenant",
+        processing: "Traitement...",
+        success: "Paiement valide avec succes.",
+        createIntentError: "Impossible d'initialiser le paiement."
+      },
+      profile: {
+        title: "Profil",
+        subtitle: "Espace profil client bientot disponible."
+      },
+      settings: {
+        title: "Parametres",
+        subtitle: "Ajustez la langue et le theme.",
+        appearance: "Apparence",
+        language: "Langue"
+      },
+      policy: {
+        back: "Retour boutique",
+        privacyPolicy: {
+          title: "Politique de confidentialite",
+          body: "Nous collectons uniquement les informations necessaires pour traiter vos commandes."
+        },
+        termsOfService: {
+          title: "Conditions de service",
+          body: "En utilisant ba2i3 Store, vous acceptez les politiques de la boutique et les regles de paiement."
+        },
+        refundPolicy: {
+          title: "Politique de remboursement",
+          body: "Les produits eligibles peuvent etre rembourses selon leur etat et la periode de retour."
+        },
+        shippingPolicy: {
+          title: "Politique de livraison",
+          body: "Les delais de livraison varient selon la region. Le suivi est partage apres confirmation."
+        }
       }
     }
   },
   ar: {
     translation: {
       brand: {
-        name: "Perfect Store",
-        tagline: "واجهة زجاجية زرقاء"
+        name: "متجر ba2i3",
+        tagline: "تسوق ذكي وتجربة احترافية"
       },
       meta: {
-        products: "المنتجات - Perfect Store",
-        productDetails: "تفاصيل المنتج - Perfect Store",
-        login: "تسجيل الدخول - Perfect Store",
-        register: "إنشاء حساب - Perfect Store",
-        admin: "لوحة الإدارة - Perfect Store"
+        products: "المنتجات - متجر ba2i3",
+        productDetails: "تفاصيل المنتج - متجر ba2i3",
+        login: "تسجيل الدخول - متجر ba2i3",
+        register: "إنشاء حساب - متجر ba2i3",
+        admin: "الإدارة - متجر ba2i3",
+        checkout: "الدفع - متجر ba2i3",
+        profile: "الملف الشخصي - متجر ba2i3",
+        settings: "الإعدادات - متجر ba2i3",
+        policy: "السياسة - متجر ba2i3"
       },
       nav: {
         products: "المنتجات",
         login: "تسجيل الدخول",
         register: "إنشاء حساب",
-        admin: "الإدارة"
+        admin: "الإدارة",
+        cart: "السلة",
+        profile: "الملف الشخصي",
+        settings: "الإعدادات",
+        checkout: "الدفع"
       },
       language: {
         en: "EN",
@@ -361,73 +459,69 @@ const resources = {
         search: "بحث",
         loading: "جاري التحميل...",
         noResults: "لا توجد منتجات",
-        noResultsHint: "جرّب بحثًا أو فئة مختلفة.",
+        noResultsHint: "جرّب بحثًا أو فئة أخرى.",
         source: "مصدر البيانات: {{source}}",
         sourceApi: "API",
-        sourceMock: "بيانات محلية",
+        sourceMock: "مصدر محلي",
         currency: "درهم",
         status: "الحالة",
         active: "متاح",
         outOfStock: "نفدت الكمية"
       },
       footer: {
-        privacy: "الخصوصية",
-        terms: "الشروط",
-        contact: "اتصل بنا",
-        refund: "الاسترجاع",
+        privacyPolicy: "سياسة الخصوصية",
+        termsOfService: "شروط الخدمة",
+        refundPolicy: "سياسة الاسترجاع",
+        shippingPolicy: "سياسة الشحن",
         rights: "جميع الحقوق محفوظة."
+      },
+      contact: {
+        button: "اتصل بنا",
+        title: "اتصل بنا",
+        subtitle: "أرسل رسالتك وسنقوم بالرد عليك في أقرب وقت.",
+        email: "البريد الإلكتروني",
+        message: "الرسالة",
+        messagePlaceholder: "كيف يمكننا مساعدتك؟",
+        submit: "إرسال الرسالة",
+        sending: "جاري الإرسال...",
+        success: "تم إرسال الرسالة بنجاح.",
+        failed: "تعذر إرسال الرسالة."
       },
       products: {
         title: "المنتجات",
-        subtitle: "أجهزة حديثة بنفس نظام التصميم الزجاجي الأزرق.",
+        subtitle: "اكتشف مجموعتنا المختارة بتصميم احترافي واضح.",
         featured: "المنتج المميز",
-        bestSeller: "الأكثر مبيعًا",
-        newest: "الأحدث",
+        featuredHint: "الأكثر مبيعًا هذا الأسبوع",
         searchPlaceholder: "ابحث عن المنتجات...",
         categoryPlaceholder: "اختر الفئة",
-        browse: "تصفح المنتجات",
         results: "النتائج: {{count}}",
         addToast: "تمت الإضافة إلى السلة.",
         cardFallback: "بدون صورة",
         heroFallback: "صورة مميزة",
-        sectionTitle: "كتالوج المنتجات"
+        sectionTitle: "الكتالوج",
+        compactMode: "بطاقات مدمجة"
       },
       product: {
         notFoundTitle: "المنتج غير موجود",
-        notFoundHint: "هذا المنتج غير متوفر في المصدر الحالي.",
-        details: "تفاصيل المنتج",
+        notFoundHint: "هذا المنتج غير متاح حالياً.",
         shippingNote: "توصيل سريع ودفع آمن.",
         related: "منتجات مشابهة",
         addToast: "تمت إضافة المنتج إلى السلة."
       },
       auth: {
-        leftMessageTop: "شارك المعرفة وانشر المتعة",
-        leftMessageBottom: "مع SupShare",
         loginTitle: "تسجيل الدخول",
         registerTitle: "إنشاء حساب",
-        loginSubtitle: "بسّط مسارك المهني وسجل الدخول بسهولة",
-        registerSubtitle: "بسّط مسارك المهني وأنشئ حسابك بسهولة",
+        loginSubtitle: "ادخل إلى حسابك بسرعة.",
+        registerSubtitle: "أنشئ حسابك خلال ثوانٍ.",
         firstName: "الاسم الأول",
         lastName: "الاسم الأخير",
         email: "البريد الإلكتروني",
         password: "كلمة المرور",
         forgotPassword: "هل نسيت كلمة المرور؟",
-        day: "اليوم",
-        month: "الشهر",
-        year: "السنة",
-        dateOfBirth: "تاريخ الميلاد",
-        gender: "الجنس",
-        male: "ذكر",
-        female: "أنثى",
-        termsPrefix: "بالتسجيل، أنت تقر بأنك قرأت ووافقت على",
-        termsService: "شروط الخدمة",
-        termsConnector: "و",
-        termsPrivacy: "سياسة الخصوصية.",
-        termsSuffix: "كما توافق على تلقي رسائل بريد إلكتروني أو SMS ويمكنك إلغاء الاشتراك في أي وقت.",
         loginButton: "تسجيل الدخول",
         registerButton: "إنشاء حساب",
-        switchToLogin: "أو تسجيل الدخول",
-        switchToRegister: "أو إنشاء حساب",
+        switchToLogin: "لديك حساب بالفعل؟",
+        switchToRegister: "ليس لديك حساب؟",
         missingFields: "يرجى إكمال جميع الحقول المطلوبة.",
         loginSuccess: "تم تسجيل الدخول بنجاح.",
         registerSuccess: "تم إنشاء الحساب بنجاح.",
@@ -435,7 +529,7 @@ const resources = {
       },
       admin: {
         title: "لوحة الإدارة",
-        subtitle: "إدارة المنتجات بنفس أسلوب الزجاج الأزرق.",
+        subtitle: "إدارة المنتجات من خلال لوحة تحكم احترافية.",
         mode: "الوضع",
         modeApi: "متصل بالـ API",
         modeMock: "وضع محلي احتياطي",
@@ -451,11 +545,11 @@ const resources = {
         price: "السعر",
         category: "الفئة",
         stock: "المخزون",
-        emoji: "رمز تعبيري",
+        emoji: "إيموجي",
         image: "رابط الصورة",
         description: "الوصف",
-        submitCreate: "إضافة",
-        submitUpdate: "تحديث",
+        submitCreate: "إضافة منتج",
+        submitUpdate: "تحديث المنتج",
         cancelEdit: "إلغاء التعديل",
         listTitle: "إدارة المنتجات",
         searchPlaceholder: "ابحث بالاسم أو الفئة أو الوصف...",
@@ -471,6 +565,47 @@ const resources = {
         deletedApi: "تم الحذف من API.",
         deletedLocal: "تم الحذف محليًا.",
         loadFailed: "تعذر تحميل المنتجات."
+      },
+      checkout: {
+        title: "دفع آمن",
+        subtitle: "ادفع بأمان عبر Stripe Payment Element.",
+        empty: "السلة فارغة.",
+        goShop: "متابعة التسوق",
+        summary: "ملخص الطلب",
+        cardTitle: "الدفع بالبطاقة",
+        payNow: "ادفع الآن",
+        processing: "جاري المعالجة...",
+        success: "تم الدفع بنجاح.",
+        createIntentError: "تعذر تهيئة عملية الدفع."
+      },
+      profile: {
+        title: "الملف الشخصي",
+        subtitle: "صفحة الملف الشخصي ستكون متاحة قريبًا."
+      },
+      settings: {
+        title: "الإعدادات",
+        subtitle: "قم بضبط اللغة والمظهر.",
+        appearance: "المظهر",
+        language: "اللغة"
+      },
+      policy: {
+        back: "العودة للمتجر",
+        privacyPolicy: {
+          title: "سياسة الخصوصية",
+          body: "نقوم بجمع البيانات الضرورية فقط لمعالجة الطلبات وتحسين جودة الخدمة."
+        },
+        termsOfService: {
+          title: "شروط الخدمة",
+          body: "باستخدام متجر ba2i3 فإنك توافق على سياسات المتجر وقواعد الدفع الآمن."
+        },
+        refundPolicy: {
+          title: "سياسة الاسترجاع",
+          body: "يمكن استرجاع المنتجات المؤهلة وفق حالة المنتج وفترة الإرجاع المعتمدة."
+        },
+        shippingPolicy: {
+          title: "سياسة الشحن",
+          body: "تختلف مدة الشحن حسب المنطقة ويتم إرسال تفاصيل التتبع بعد تأكيد الطلب."
+        }
       }
     }
   }

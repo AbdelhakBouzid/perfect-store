@@ -1,0 +1,57 @@
+<svg width="768" height="240" viewBox="0 0 768 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="768" height="240" fill="transparent" />
+  <g transform="translate(10 28)">
+    <path
+      d="M28 118C28 110.268 34.268 104 42 104H149C156.732 104 163 110.268 163 118V124C163 131.732 156.732 138 149 138H42C34.268 138 28 131.732 28 124V118Z"
+      fill="#FF8A00"
+    />
+    <path
+      d="M58 74C58 55.222 73.222 40 92 40C110.778 40 126 55.222 126 74V87H113V74C113 62.402 103.598 53 92 53C80.402 53 71 62.402 71 74V87H58V74Z"
+      fill="#FFB341"
+    />
+    <path
+      d="M52 78H135L145 154H42L52 78Z"
+      fill="url(#bagGradient)"
+    />
+    <path
+      d="M24 168C24 162.477 28.477 158 34 158H173C178.523 158 183 162.477 183 168V172C183 177.523 178.523 182 173 182H34C28.477 182 24 177.523 24 172V168Z"
+      fill="#FF8A00"
+    />
+    <circle cx="64" cy="205" r="14" fill="#1476D4" />
+    <circle cx="150" cy="205" r="14" fill="#1476D4" />
+  </g>
+  <g transform="translate(178 30)">
+    <path
+      d="M30 152V2H74V66C83.2 56.4 98.2 50 115 50C154.6 50 182 78.8 182 121.8C182 164.6 154.6 194 115 194C97.4 194 82 187.4 72.2 176.2V192H30V152ZM74 123.2C74 144.2 88.2 158.6 108.6 158.6C129.2 158.6 143.4 144.2 143.4 123.2C143.4 102.4 129.2 88 108.6 88C88.2 88 74 102.4 74 123.2Z"
+      fill="url(#blueGradient)"
+    />
+    <path
+      d="M200 121.8C200 78.8 229.6 50 271 50C290.4 50 306.8 56 318.4 67.2V54H359.6V192H318.4V178.2C306.8 189.8 290.2 196 271 196C229.6 196 200 166.8 200 121.8ZM245.4 121.8C245.4 143.2 259.8 158.2 280.8 158.2C301.6 158.2 316 143.2 316 121.8C316 100.8 301.6 86.2 280.8 86.2C259.8 86.2 245.4 100.8 245.4 121.8Z"
+      fill="url(#blueGradient)"
+    />
+    <path
+      d="M373 122C373 54.4 421 6 488.6 6C556.4 6 604.2 54.4 604.2 122C604.2 189.8 556.4 238 488.6 238H447.6V198.4H488.6C534 198.4 566 166 566 122C566 78.2 534 45.8 488.6 45.8C443.4 45.8 411.2 78.2 411.2 122V192H373V122Z"
+      fill="url(#blueGradient)"
+    />
+    <circle cx="625" cy="62" r="20" fill="#FFAF00" />
+    <path d="M619 192V86H663V192H619Z" fill="url(#orangeGradient)" />
+    <path
+      d="M680 192V157.4L750.2 100.2H682.2V62H806V96.6L735.6 153.8H808V192H680Z"
+      fill="url(#orangeGradient)"
+    />
+  </g>
+  <defs>
+    <linearGradient id="bagGradient" x1="41" y1="74" x2="150" y2="165" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#41D2F8" />
+      <stop offset="1" stop-color="#0C63CC" />
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="35" y1="0" x2="530" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1AA0F2" />
+      <stop offset="1" stop-color="#155CC4" />
+    </linearGradient>
+    <linearGradient id="orangeGradient" x1="615" y1="48" x2="810" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFC126" />
+      <stop offset="1" stop-color="#FF7C00" />
+    </linearGradient>
+  </defs>
+</svg>

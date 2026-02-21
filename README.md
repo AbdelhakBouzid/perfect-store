@@ -1,75 +1,88 @@
-# Perfect Store
+# PERFECT-STORE
 
-متجر إلكتروني بسيط ومتكامل (واجهة + API + لوحة تحكم) مبني بـ:
-- **Frontend:** HTML/CSS/Vanilla JS
-- **Backend:** Node.js + Express
-- **Database:** SQLite
+Modern storefront built with:
+- `client/` Vite + React + Tailwind CSS
+- `server/` Express + SQLite (kept as-is, including legacy `server/public/*`)
+- `api/` Vercel Serverless Functions for checkout/contact
 
-## Project Structure
+## What Is Deployed
 
-- `client/` واجهة المتجر ولوحة الإدارة (نسخة التطوير)
-- `server/` API + قاعدة البيانات + رفع الصور
-- `server/public/` نسخة واجهة يتم تقديمها مباشرة من السيرفر (مناسبة لنشر Railway عندما Root Directory = `/server`)
+- Frontend: `client/` (React SPA)
+- Serverless endpoints (same Vercel project):
+  - `POST /api/create-payment-intent`
+  - `POST /api/contact`
 
-## Quick Start (Local)
+`server/public/*` remains in the repo for legacy compatibility but is not used by the React frontend.
+
+## Local Development
+
+### 1) Start backend API (products/auth/admin)
 
 ```bash
 cd server
-npm ci
+npm install
 npm run dev
 ```
 
-ثم افتح:
-- `http://localhost:5000/` المتجر
-- `http://localhost:5000/auth` صفحة تسجيل الدخول (تصميم SupShare)
-- `http://localhost:5000/auth/register` صفحة إنشاء الحساب
-- `http://localhost:5000/admin` لوحة الإدارة
-- `http://localhost:5000/api/health` فحص الخدمة
+Default backend URL: `http://localhost:5000`
 
-## Environment Variables
-
-انسخ الملف:
+### 2) Start frontend
 
 ```bash
-cp server/.env.example server/.env
+cd client
+npm install
+npm run dev
 ```
 
-المتغيرات الأساسية:
-- `PORT=5000`
-- `ADMIN_TOKEN=change-this-to-strong-token`
-- `CORS_ORIGIN=*` أو قائمة Origins مفصولة بفواصل
-- `NODE_ENV=production`
+### 3) Build frontend
 
-## Production (Railway)
+```bash
+cd client
+npm run build
+```
 
-### إذا Root Directory = `/server` (كما في مشروعك)
-- السيرفر سيعتمد إعدادات:
-  - `server/railway.json`
-  - `server/nixpacks.toml`
-- إعادة النشر الموصى بها:
-  1. Push آخر commit.
-  2. Railway → Redeploy → Clear Build Cache.
-  3. تأكد أن آخر Deployment يستخدم آخر Commit SHA.
+## Vercel Deployment (Single Project)
 
-## Security/Quality Improvements
+This repo is configured for a single Vercel project with:
+- frontend build from `client/`
+- serverless functions from `/api`
 
-- Input validation أفضل للـ payloads.
-- Request logging middleware بسيط.
-- Error handling مركزي.
-- Health endpoint (`/api/health`).
+`vercel.json` is included at repo root.
 
-## Scripts
+### Recommended Vercel settings
 
-داخل `server/package.json`:
-- `npm run dev` تشغيل محلي.
-- `npm run start` تشغيل إنتاج.
-- `npm run check` فحص syntax.
+- Framework: `Vite`
+- Root: repository root
+- Build command: `cd client && npm install && npm run build`
+- Output directory: `client/dist`
 
-## Frontend Migration Note (2026-02-21)
+## Required Environment Variables
 
-- Primary frontend is now the standalone Vite + React app in `client/`.
-- `server/public/` is kept as legacy static assets and is no longer the primary deployment target.
-- Vercel frontend settings:
-  - Root Directory: `client`
-  - Build Command: `npm run build`
-  - Output Directory: `dist`
+### Frontend (`client`, build-time)
+
+- `VITE_API_URL`  
+  Backend base URL for products/auth/admin (example: `https://your-backend.example.com`)
+- `VITE_STRIPE_PUBLISHABLE_KEY`  
+  Stripe publishable key (test or live)
+- `VITE_STRIPE_CURRENCY` (optional, default: `usd`)  
+  Currency used when creating PaymentIntents
+
+### Vercel Serverless (`/api`, runtime)
+
+- `STRIPE_SECRET_KEY`  
+  Stripe secret key used by `/api/create-payment-intent`
+
+## API Endpoints Added
+
+- `POST /api/create-payment-intent`
+  - body: `{ amount, currency, metadata? }`
+  - returns: `{ clientSecret }`
+- `POST /api/contact`
+  - body: `{ email, message }`
+  - returns: `{ ok: true, id }`
+
+## Notes
+
+- Checkout uses Stripe Payment Element (no fake bank/card form).
+- UI supports EN/FR/AR with RTL for Arabic.
+- Theme toggle (🌙 / ☀️) is persisted in localStorage.

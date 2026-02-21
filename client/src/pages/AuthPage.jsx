@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Toast from "../components/Toast";
-import GlassCard from "../components/layout/GlassCard";
+import logo from "../assets/ba2i3-logo.svg";
 import LayoutShell from "../components/layout/LayoutShell";
+import Container from "../components/layout/Container";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import LanguageSwitch from "../components/ui/LanguageSwitch";
-import Select from "../components/ui/Select";
 import ThemeToggle from "../components/ui/ThemeToggle";
+import SocialLinks from "../components/ui/SocialLinks";
+import Toast from "../components/Toast";
 import useToast from "../hooks/useToast";
 import { api } from "../lib/api";
 import { USER_TOKEN_STORAGE_KEY } from "../lib/storage";
@@ -17,19 +18,8 @@ const INITIAL_FORM = {
   firstName: "",
   lastName: "",
   email: "",
-  password: "",
-  day: "21",
-  month: "2",
-  year: "2026",
-  gender: "male"
+  password: ""
 };
-
-const SOCIAL_SHORTCUTS = ["G", "f", "t", "GH"];
-
-function buildRange(from, to) {
-  const size = to - from + 1;
-  return Array.from({ length: size }, (_, index) => from + index);
-}
 
 export default function AuthPage({ mode }) {
   const isRegister = mode === "register";
@@ -37,15 +27,11 @@ export default function AuthPage({ mode }) {
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toastMessage, showToast] = useToast(2300);
+  const [toastMessage, showToast] = useToast(2200);
 
   useEffect(() => {
     document.title = isRegister ? t("meta.register") : t("meta.login");
   }, [isRegister, t, i18n.language]);
-
-  const years = useMemo(() => buildRange(1985, 2026).reverse(), []);
-  const months = useMemo(() => buildRange(1, 12), []);
-  const days = useMemo(() => buildRange(1, 31), []);
 
   function setField(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -54,11 +40,11 @@ export default function AuthPage({ mode }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const hasRequiredData = isRegister
+    const requiredOk = isRegister
       ? form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.password
       : form.email.trim() && form.password;
 
-    if (!hasRequiredData) {
+    if (!requiredOk) {
       showToast(t("auth.missingFields"));
       return;
     }
@@ -96,168 +82,88 @@ export default function AuthPage({ mode }) {
   }
 
   return (
-    <LayoutShell centered>
-      <GlassCard className="mx-auto max-w-5xl overflow-hidden border-white/30 p-0">
-        <div className="grid min-h-[680px] lg:grid-cols-[1.1fr_0.9fr]">
-          <aside className="relative hidden overflow-hidden border-r border-white/15 bg-white/12 p-8 lg:flex lg:flex-col lg:justify-between">
-            <div className="absolute -top-24 end-[-90px] h-72 w-72 rounded-full bg-white/20" />
-            <div className="absolute start-12 top-20 h-8 w-8 rounded-full bg-orange-400/80 shadow-lg shadow-orange-500/40" />
-            <div className="absolute end-16 top-36 h-4 w-4 rounded-full bg-yellow-300/80" />
-            <div className="absolute bottom-24 start-20 h-6 w-6 rounded-full bg-lime-400/75" />
-
-            <div className="relative z-10 space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">{t("brand.name")}</p>
-              <div className="glass-card grid min-h-[360px] place-items-center bg-white/8 p-8">
-                <div className="space-y-4 text-center">
-                  <div className="mx-auto h-28 w-40 rounded-3xl border border-white/30 bg-white/20" />
-                  <div className="text-5xl">💻</div>
-                </div>
-              </div>
+    <LayoutShell>
+      <Container className="flex min-h-screen items-center justify-center py-8">
+        <section className="surface-card w-full max-w-lg p-5 sm:p-8">
+          <div className="mb-5 flex items-center justify-between gap-2">
+            <Link className="text-sm font-semibold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100" to="/products">
+              ← {t("actions.back")}
+            </Link>
+            <div className="flex items-center gap-2">
+              <LanguageSwitch />
+              <ThemeToggle />
             </div>
+          </div>
 
-            <p className="relative z-10 text-center text-2xl font-semibold leading-snug text-white">
-              {t("auth.leftMessageTop")}
-              <br />
-              {t("auth.leftMessageBottom")}
+          <div className="mb-6 flex flex-col items-center gap-3 text-center">
+            <img alt="ba2i3 logo" className="h-20 w-auto object-contain sm:h-24" src={logo} />
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">
+              {isRegister ? t("auth.registerTitle") : t("auth.loginTitle")}
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {isRegister ? t("auth.registerSubtitle") : t("auth.loginSubtitle")}
             </p>
-          </aside>
+          </div>
 
-          <section className="flex flex-col bg-[#2f45c6]/70 p-5 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <Link className="text-base font-semibold text-white/90 hover:text-white" to="/products">
-                {t("brand.name")}
-              </Link>
-              <div className="flex items-center gap-2">
-                <LanguageSwitch />
-                <ThemeToggle />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {isRegister ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Input
+                  onChange={(event) => setField("firstName", event.target.value)}
+                  placeholder={t("auth.firstName")}
+                  value={form.firstName}
+                />
+                <Input
+                  onChange={(event) => setField("lastName", event.target.value)}
+                  placeholder={t("auth.lastName")}
+                  value={form.lastName}
+                />
               </div>
-            </div>
+            ) : null}
 
-            <div className="mt-8 space-y-2 border-b border-white/30 pb-4">
-              <h1 className="text-4xl font-extrabold text-white">
-                {isRegister ? t("auth.registerTitle") : t("auth.loginTitle")}
-              </h1>
-              <p className="text-white/80">
-                {isRegister ? t("auth.registerSubtitle") : t("auth.loginSubtitle")}
-              </p>
-            </div>
+            <Input
+              onChange={(event) => setField("email", event.target.value)}
+              placeholder={t("auth.email")}
+              type="email"
+              value={form.email}
+            />
+            <Input
+              onChange={(event) => setField("password", event.target.value)}
+              placeholder={t("auth.password")}
+              type="password"
+              value={form.password}
+            />
 
-            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-              {isRegister ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Input
-                    onChange={(event) => setField("firstName", event.target.value)}
-                    placeholder={t("auth.firstName")}
-                    value={form.firstName}
-                  />
-                  <Input
-                    onChange={(event) => setField("lastName", event.target.value)}
-                    placeholder={t("auth.lastName")}
-                    value={form.lastName}
-                  />
-                </div>
-              ) : null}
-
-              <Input
-                onChange={(event) => setField("email", event.target.value)}
-                placeholder={t("auth.email")}
-                type="email"
-                value={form.email}
-              />
-              <Input
-                onChange={(event) => setField("password", event.target.value)}
-                placeholder={t("auth.password")}
-                type="password"
-                value={form.password}
-              />
-
-              {!isRegister ? (
-                <div className="text-end text-sm text-white/85">
-                  <a href="#" onClick={(event) => event.preventDefault()}>
-                    {t("auth.forgotPassword")}
-                  </a>
-                </div>
-              ) : null}
-
-              {isRegister ? (
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold text-white/85">{t("auth.dateOfBirth")}</p>
-                    <div className="grid gap-2 sm:grid-cols-3">
-                      <Select onChange={(event) => setField("day", event.target.value)} value={form.day}>
-                        {days.map((day) => (
-                          <option key={`day-${day}`} value={String(day)}>
-                            {day}
-                          </option>
-                        ))}
-                      </Select>
-                      <Select onChange={(event) => setField("month", event.target.value)} value={form.month}>
-                        {months.map((month) => (
-                          <option key={`month-${month}`} value={String(month)}>
-                            {month}
-                          </option>
-                        ))}
-                      </Select>
-                      <Select onChange={(event) => setField("year", event.target.value)} value={form.year}>
-                        {years.map((year) => (
-                          <option key={`year-${year}`} value={String(year)}>
-                            {year}
-                          </option>
-                        ))}
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold text-white/85">{t("auth.gender")}</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {["male", "female"].map((gender) => (
-                        <button
-                          className={`surface-field text-start ${
-                            form.gender === gender ? "border-cyan-200/90 bg-white/20" : ""
-                          }`}
-                          key={gender}
-                          onClick={() => setField("gender", gender)}
-                          type="button"
-                        >
-                          {t(`auth.${gender}`)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="text-xs leading-relaxed text-white/78">
-                    {t("auth.termsPrefix")}{" "}
-                    <strong>{t("auth.termsService")}</strong> {t("auth.termsConnector")}{" "}
-                    <strong>{t("auth.termsPrivacy")}</strong> {t("auth.termsSuffix")}
-                  </p>
-                </div>
-              ) : null}
-
-              <Button className="w-full" disabled={isSubmitting} type="submit" variant="primary">
-                {isRegister ? t("auth.registerButton") : t("auth.loginButton")}
-              </Button>
-            </form>
-
-            <div className="mt-6 flex items-center justify-center gap-3">
-              {SOCIAL_SHORTCUTS.map((item) => (
-                <span
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-white/20 text-sm font-semibold text-white"
-                  key={item}
+            {!isRegister ? (
+              <div className="text-end text-sm">
+                <a
+                  className="text-slate-500 transition hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+                  href="#"
+                  onClick={(event) => event.preventDefault()}
                 >
-                  {item}
-                </span>
-              ))}
-            </div>
+                  {t("auth.forgotPassword")}
+                </a>
+              </div>
+            ) : null}
 
-            <div className="mt-5 border-t border-white/30 pt-5">
-              <Button className="w-full" to={isRegister ? "/login" : "/register"} variant="secondary">
-                {isRegister ? t("auth.switchToLogin") : t("auth.switchToRegister")}
-              </Button>
-            </div>
-          </section>
-        </div>
-      </GlassCard>
+            <Button className="w-full" disabled={isSubmitting} type="submit" variant="primary">
+              {isRegister ? t("auth.registerButton") : t("auth.loginButton")}
+            </Button>
+          </form>
+
+          <SocialLinks className="mt-6" />
+
+          <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            {isRegister ? t("auth.switchToLogin") : t("auth.switchToRegister")}{" "}
+            <Link
+              className="font-bold text-accent-700 hover:text-accent-800 dark:text-accent-300 dark:hover:text-accent-200"
+              to={isRegister ? "/login" : "/register"}
+            >
+              {isRegister ? t("auth.loginButton") : t("auth.registerButton")}
+            </Link>
+          </div>
+        </section>
+      </Container>
 
       <Toast message={toastMessage} />
     </LayoutShell>

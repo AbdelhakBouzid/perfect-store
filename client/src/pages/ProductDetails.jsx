@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Toast from "../components/Toast";
-import Footer from "../components/layout/Footer";
-import GlassCard from "../components/layout/GlassCard";
-import LayoutShell from "../components/layout/LayoutShell";
-import TopBar from "../components/layout/TopBar";
+import SiteLayout from "../components/layout/SiteLayout";
+import Container from "../components/layout/Container";
 import ProductCard from "../components/store/ProductCard";
 import Button from "../components/ui/Button";
+import Toast from "../components/Toast";
 import useCart from "../hooks/useCart";
 import useToast from "../hooks/useToast";
 import { formatPrice } from "../lib/format";
@@ -19,10 +17,9 @@ export default function ProductDetailsPage() {
   const { t, i18n } = useTranslation();
   const [product, setProduct] = useState(null);
   const [catalog, setCatalog] = useState([]);
-  const [source, setSource] = useState("api");
   const [loading, setLoading] = useState(true);
+  const { addItem } = useCart(CART_STORAGE_KEY);
   const [toastMessage, showToast] = useToast();
-  const { count, addItem } = useCart(CART_STORAGE_KEY);
 
   useEffect(() => {
     document.title = t("meta.productDetails");
@@ -31,11 +28,11 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     let active = true;
     setLoading(true);
+
     fetchProductDetails(id).then((result) => {
       if (!active) return;
       setProduct(result.product);
       setCatalog(result.catalog);
-      setSource(result.source);
       setLoading(false);
     });
 
@@ -52,15 +49,8 @@ export default function ProductDetailsPage() {
           Number(item.id) !== Number(product.id) &&
           String(item.category).toLowerCase() === String(product.category).toLowerCase()
       )
-      .slice(0, 3);
+      .slice(0, 4);
   }, [catalog, product]);
-
-  const links = [
-    { to: "/products", label: t("nav.products") },
-    { to: "/login", label: t("nav.login") },
-    { to: "/register", label: t("nav.register") },
-    { to: "/admin", label: t("nav.admin") }
-  ];
 
   function handleAddToCart(productId) {
     addItem(productId);
@@ -68,92 +58,74 @@ export default function ProductDetailsPage() {
   }
 
   return (
-    <LayoutShell>
-      <GlassCard className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
-        <TopBar buyNowTo={product ? `/product/${product.id}` : "/products"} cartCount={count} links={links} />
-
+    <SiteLayout>
+      <Container className="space-y-6">
         {loading ? (
-          <div className="mt-6 grid gap-5 lg:grid-cols-2">
-            <div className="glass-card h-80 animate-pulse" />
-            <div className="glass-card h-80 animate-pulse" />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="surface-card h-96 animate-pulse" />
+            <div className="surface-card h-96 animate-pulse" />
           </div>
         ) : null}
 
         {!loading && !product ? (
-          <div className="glass-card mt-6 space-y-4 p-8 text-center">
-            <h1 className="text-2xl font-bold text-white">{t("product.notFoundTitle")}</h1>
-            <p className="text-sm text-white/75">{t("product.notFoundHint")}</p>
-            <Button to="/products" variant="primary">
+          <section className="surface-card p-8 text-center">
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">{t("product.notFoundTitle")}</h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("product.notFoundHint")}</p>
+            <Button className="mt-4" to="/products" variant="primary">
               {t("actions.back")}
             </Button>
-          </div>
+          </section>
         ) : null}
 
         {!loading && product ? (
-          <section className="mt-6 space-y-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_1.05fr]">
-              <div className="glass-card overflow-hidden">
-                {resolveProductImage(product) ? (
-                  <img
-                    alt={product.name}
-                    className="h-full min-h-[320px] w-full object-cover"
-                    src={resolveProductImage(product)}
-                  />
-                ) : (
-                  <div className="grid min-h-[320px] place-items-center text-6xl">{product.emoji || "🛍️"}</div>
-                )}
-              </div>
-
-              <div className="glass-card space-y-4 p-5 sm:p-6">
-                <span className="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
-                  {product.category}
-                </span>
-                <h1 className="text-3xl font-extrabold text-white">{product.name}</h1>
-                <p className="text-sm leading-relaxed text-white/80">{product.description}</p>
-                <p className="text-3xl font-extrabold text-white">
-                  {formatPrice(product.price, i18n.language)} {t("common.currency")}
-                </p>
-                <p className="text-sm text-white/70">{t("product.shippingNote")}</p>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button to={`/product/${product.id}`} variant="secondary">
-                    {t("actions.buyNow")}
-                  </Button>
-                  <Button onClick={() => handleAddToCart(product.id)} variant="primary">
-                    {t("actions.addToCart")}
-                  </Button>
-                  <Button to="/products" variant="ghost">
-                    {t("actions.back")}
-                  </Button>
-                </div>
-
-                <p className="text-xs text-white/65">
-                  {t("common.source", {
-                    source: source === "api" ? t("common.sourceApi") : t("common.sourceMock")
-                  })}
-                </p>
-              </div>
+          <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="surface-card overflow-hidden">
+              {resolveProductImage(product) ? (
+                <img alt={product.name} className="h-full max-h-[620px] w-full object-cover" src={resolveProductImage(product)} />
+              ) : (
+                <div className="grid min-h-[420px] place-items-center text-6xl">{product.emoji || "🛍️"}</div>
+              )}
             </div>
 
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-white">{t("product.related")}</h2>
-              {relatedProducts.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {relatedProducts.map((item) => (
-                    <ProductCard key={item.id} onAddToCart={handleAddToCart} product={item} />
-                  ))}
-                </div>
-              ) : (
-                <div className="glass-card p-6 text-sm text-white/75">{t("common.noResults")}</div>
-              )}
+            <div className="surface-card space-y-4 p-5 sm:p-6">
+              <span className="inline-flex rounded-full bg-brand-100 px-3 py-1 text-xs font-bold text-brand-800 dark:bg-slate-800 dark:text-slate-200">
+                {product.category}
+              </span>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-50 sm:text-3xl">{product.name}</h1>
+              <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{product.description}</p>
+              <p className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">
+                {formatPrice(product.price, i18n.language)} {t("common.currency")}
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t("product.shippingNote")}</p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={() => handleAddToCart(product.id)} variant="primary">
+                  {t("actions.addToCart")}
+                </Button>
+                <Button to="/checkout" variant="secondary">
+                  {t("actions.buyNow")}
+                </Button>
+                <Button to="/products" variant="ghost">
+                  {t("actions.back")}
+                </Button>
+              </div>
             </div>
           </section>
         ) : null}
 
-        <Footer />
-      </GlassCard>
+        {!loading && relatedProducts.length > 0 ? (
+          <section className="space-y-3">
+            <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">{t("product.related")}</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {relatedProducts.map((item) => (
+                <ProductCard key={item.id} onAddToCart={handleAddToCart} product={item} />
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </Container>
 
       <Toast message={toastMessage} />
-    </LayoutShell>
+    </SiteLayout>
   );
 }
