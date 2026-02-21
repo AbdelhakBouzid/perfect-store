@@ -64,3 +64,12 @@ cp server/.env.example server/.env
 - `npm run dev` تشغيل محلي.
 - `npm run start` تشغيل إنتاج.
 - `npm run check` فحص syntax.
+
+## Frontend Migration Note (2026-02-21)
+
+- Primary frontend is now the standalone Vite + React app in `client/`.
+- `server/public/` is kept as legacy static assets and is no longer the primary deployment target.
+- Vercel frontend settings:
+  - Root Directory: `client`
+  - Build Command: `npm run build`
+  - Output Directory: `dist`
